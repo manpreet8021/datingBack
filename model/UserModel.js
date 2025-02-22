@@ -1,10 +1,9 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
-import LookUpData from './lookUpData.js';
 
-class LookUpValue extends Model {}
+class User extends Model {}
 
-LookUpValue.init(
+User.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -16,21 +15,26 @@ LookUpValue.init(
       allowNull: false,
       unique: true,
     },
-    active: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
+    mobile: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    authtype: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      default: true
+    }
   },
   {
     sequelize, // The database connection instance
-    modelName: 'LookUpValue', // The name of the model
-    tableName: 'lookUpValue', // The name of the table in MySQL
+    modelName: 'User', // The name of the model
+    tableName: 'user', // The name of the table in MySQL
     timestamps: true, // Whether to add timestamps (createdAt, updatedAt)
   }
 );
 
-LookUpData.hasMany(LookUpValue);
-LookUpValue.belongsTo(LookUpData);
-
-export default LookUpValue
+export default User
