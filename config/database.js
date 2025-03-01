@@ -1,6 +1,8 @@
 import { sequelize } from "./sequelize.js";
 import LookUpData from "../model/lookUpDataModel.js";
 import LookUpValue from "../model/lookUpValueModel.js";
+import OtpLog from "../model/otpLogModel.js";
+import User from "../model/userModel.js";
 
 
 const connectDb = async() => {

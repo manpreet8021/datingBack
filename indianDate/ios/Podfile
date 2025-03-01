@@ -15,6 +15,17 @@ if linkage != nil
 end
 
 target 'indianDate' do
+  use_frameworks! :linkage => :static
+
+  pod 'Firebase/Auth'
+  pod 'Firebase/Core'
+  pod 'FirebaseCore'
+  pod 'FirebaseCoreExtension'
+  pod 'GoogleUtilities'
+  pod 'FirebaseAuthInterop'
+  pod 'FirebaseAppCheckInterop'
+  pod 'RecaptchaInterop'
+
   config = use_native_modules!
 
   use_react_native!(

@@ -1,5 +1,5 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import CountDown from 'react-native-countdown-component';
 
@@ -15,19 +15,49 @@ import FText from '../../components/common/FText';
 import FButton from '../../components/common/FButton';
 import strings from '../../i18n/strings';
 import {setAuthToken} from '../../utils/AsyncStorage';
+import auth from '@react-native-firebase/auth';
+import firebaseApp from '../../utils/FirebaseIntialize';
+import {AuthNav} from '../../navigation/navigationKey';
 
 export default function VerifyLoginOtp({navigation, route}) {
-  const {number} = route.params || {number: ''};
-
+  const {number} = route.params || {number: '+917000554235'};
   const [otp, setOtp] = useState('');
   const [counterId, setCounterId] = useState('1');
   const [isTimeOver, setIsTimeOver] = useState(false);
+  const [confirmation, setConfirmation] = useState(null);
+
+  // useEffect(() => {
+  //   const subscriber = auth().onAuthStateChanged(setUser);
+  //   return subscriber; // Unsubscribe on unmount
+  // }, []);
+
+  useEffect(() => {
+    if (number) {
+      sendOTP(number);
+    }
+  }, []);
+
+  const sendOTP = async (phone) => {
+    try {
+
+    } catch (error) {
+    }
+  };
+
+  const verifyOTP = async () => {
+    try {
+      await confirmation.confirm(otp);
+    } catch (error) {
+    }
+  };
 
   const onOtpChange = text => setOtp(text);
+
   const onPressResend = () => {
-    setCounterId(counterId + '1');
+
     setOtp('');
-  };
+  }
+
   const onFinishTimer = () => {
     if (!isTimeOver) {
       setIsTimeOver(true);
@@ -35,20 +65,18 @@ export default function VerifyLoginOtp({navigation, route}) {
   };
 
   const onPressVerify = async () => {
-    await setAuthToken(true);
-    navigation.reset({
-      index: 0,
-      routes: [{name: StackNav.TabNavigation}],
-    });
-  };
-
-  const onPressBack = () => {
-    navigation.goBack();
+    if(verifyOTP) {
+      await setAuthToken(true);
+      navigation.reset({
+        index: 0,
+        routes: [{name: StackNav.TabNavigation}],
+      });
+    }
   };
 
   return (
     <FSafeAreaView>
-      <FHeader goBack={onPressBack} />
+      <FHeader/>
       <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
         <View style={localStyle.mainContainer}>
           <View>

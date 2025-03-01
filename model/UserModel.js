@@ -12,12 +12,16 @@ User.init(
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      allowNull: true,
     },
     mobile: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true
     },
     authtype: {
       type: DataTypes.STRING,
@@ -36,5 +40,10 @@ User.init(
     timestamps: true, // Whether to add timestamps (createdAt, updatedAt)
   }
 );
+
+export const checkOrCreateUser = async (data) => {
+  const [user] = await User.findOrCreate({ where: data.condition, defaults: data.defaults });
+  return user;
+};
 
 export default User

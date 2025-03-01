@@ -24,6 +24,7 @@ import {AppleIcon, GoogleIcon} from '../../assets/svg';
 import strings from '../../i18n/strings';
 import {AuthNav} from '../../navigation/navigationKey';
 import {getAsyncStorageData} from '../../utils/AsyncStorage';
+import libPhoneNumber from 'google-libphonenumber'
 
 
 GoogleSignin.configure({
@@ -50,6 +51,16 @@ export default function LogIn({navigation}) {
     setCallingCodeLib(country.dial_code);
     setCountryFlag(country.flag);
     closeCountryPicker();
+  };
+
+  const isValidPhoneNumber = () => {
+    try {
+      const phoneUtil = libPhoneNumber.PhoneNumberUtil.getInstance();
+      const parsedNumber = phoneUtil.parseAndKeepRawInput(number, countryCodeLib);
+      return phoneUtil.isValidNumber(parsedNumber);
+    } catch (error) {
+      return false;
+    }
   };
 
   const loginWithGoogle = async () => {
@@ -122,11 +133,7 @@ export default function LogIn({navigation}) {
   };
 
   const onPressLogIn = async () => {
-    // if (number === '') {
-    //   alert(strings.pleaseEnterYourMobileNumber);
-    // } else {
-    // }
-    navigation.navigate(AuthNav.VerifyLoginOtp, {number: number});
+    isValidPhoneNumber() && navigation.navigate(AuthNav.VerifyLoginOtp, {number: number});
   };
 
   const onPressSignUp = () => {
