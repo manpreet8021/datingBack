@@ -1,44 +1,33 @@
-import authApiSlice from "./api/authApiSlice";
+import authApiSlice from './api/authApiSlice';
 
-const { createSlice } = require("@reduxjs/toolkit")
-
+const {createSlice} = require('@reduxjs/toolkit');
 const initialState = {
-    userInfo: null
-}
+  userInfo: {
+    name: '',
+    dob: '',
+    gender: '',
+    interest: []
+  },
+};
 
 const authSlice = createSlice({
-    name: 'auth',
-    initialState,
-    reducers: {
-        logout: (state, action) => {
-            state.userInfo = null
-        },
-        setToken: (state, action) => {
-            state.userInfo = action.payload
-        }
+  name: 'auth',
+  initialState,
+  reducers: {
+    setUser: (state, action) => {
+        console.log(action.payload)
+      state.userInfo = {...state.userInfo, ...action.payload}
     },
-    extraReducers(builder) {
-        builder.addMatcher(
-            authApiSlice.endpoints.sendOtp.matchFulfilled,
-            (state, { payload }) => {
-                state.userInfo = payload
-            }
-        ),
-        builder.addMatcher(
-            authApiSlice.endpoints.googleLogin.matchFulfilled,
-            (state, { payload }) => {
-                state.userInfo = payload
-            }
-        ),
-        builder.addMatcher(
-            authApiSlice.endpoints.validateOtp.matchFulfilled,
-            (state, {payload}) => {
-                state.userInfo = payload
-            }
-        )
-    }
-})
+  },
+  extraReducers(builder) {
+    builder.addMatcher(
+      authApiSlice.endpoints.googleLogin.matchFulfilled,
+      (state, {payload}) => {
+        state.userInfo = {...state.userInfo, ...payload};
+      },
+    );
+  },
+});
 
-export const { logout, setToken } = authSlice.actions
-
-export default authSlice.reducer
+export const { setUser } = authSlice.actions;
+export default authSlice.reducer;

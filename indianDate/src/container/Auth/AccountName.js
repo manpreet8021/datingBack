@@ -1,7 +1,5 @@
 import {StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
-
-// custom import
 import FSafeAreaView from '../../components/common/FSafeAreaView';
 import FHeader from '../../components/common/FHeader';
 import {colors, styles} from '../../themes';
@@ -12,12 +10,14 @@ import {validName} from '../../utils/Validation';
 import FInput from '../../components/common/FInput';
 import StepIndicator from '../../components/Home/StepIndicator';
 import {AuthNav} from '../../navigation/navigationKey';
-import {setAsyncStorageData} from '../../utils/AsyncStorage';
-import {USER_DATA} from '../../common/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../store/slice/authSlice';
 
-export default function AccountName({navigation, route}) {
-  const mobileNo = route?.params?.mobileNo;
-  const [name, setName] = useState('');
+export default function AccountName({navigation}) {
+  const user = useSelector(state => state.auth)
+  const dispatch = useDispatch();
+
+  const [name, setName] = useState(user.userInfo?.name);
   const [nameError, setNameError] = useState('');
   const [nameInputStyle, setNameInputStyle] = useState(BlurredStyle);
 
@@ -27,6 +27,7 @@ export default function AccountName({navigation, route}) {
   const BlurredStyle = {
     borderColor: colors.white,
   };
+
   const FocusedStyle = {
     borderColor: colors.secondary1,
   };
@@ -34,6 +35,7 @@ export default function AccountName({navigation, route}) {
   const onFocusName = () => {
     onFocusInput(setNameInputStyle);
   };
+
   const onBlurName = () => {
     onBlurInput(setNameInputStyle);
   };
@@ -43,16 +45,12 @@ export default function AccountName({navigation, route}) {
     setNameError(msg);
     return false;
   };
+
   const onPressNext = () => {
-    // if (name === '') {
-    //   alert(strings.pleaseEnterYourName);
-    // } else {
-    // }
-    navigation.navigate(AuthNav.EnterBirthDate, {
-      userName: name,
-      mobileNo: mobileNo,
-    });
+    dispatch(setUser({name: name}))
+    navigation.navigate(AuthNav.EnterBirthDate);
   };
+  
   return (
     <FSafeAreaView>
       <FHeader />

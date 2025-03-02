@@ -27,7 +27,7 @@ const userApiSlice = apiSlice.injectEndpoints({
         }),
         googleLogin: builder.mutation({
             query: (data) => ({
-                url: 'auth/google',
+                url: 'auth/googleLogin',
                 method: 'POST',
                 body: data,
                 credentials: 'include'

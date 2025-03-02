@@ -10,7 +10,7 @@ const connectDb = async() => {
     .then(() => console.log('Connection has been established successfully.'))
     .catch((error) => console.error('Unable to connect to the database:', error));
   
-  await sequelize.sync({ alter: true })  // This will drop the table and recreate it, be careful in production!
+  await sequelize.sync({ force: true })  // This will drop the table and recreate it, be careful in production!
     .then(() => console.log('Database & tables created!'))
     .catch((error) => console.error('Error syncing database:', error));
 }

@@ -30,8 +30,7 @@ import VerifiedModal from '../../components/modal/VerifiedModal';
 import {StackNav, TabNav} from '../../navigation/navigationKey';
 import {setAsyncStorageData, setAuthToken} from '../../utils/AsyncStorage';
 
-export default function UploadPhoto({navigation, route}) {
-  const {userName, mobileNo, birthDate, gender, interest} = route?.params;
+export default function UploadPhoto({navigation}) {
 
   const [addImage, setAddImage] = useState([
     {id: 1, image: {}},

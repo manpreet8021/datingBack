@@ -11,10 +11,13 @@ import {SelectGenderData} from '../../api/constant';
 import StepIndicator from '../../components/Home/StepIndicator';
 import {AuthNav} from '../../navigation/navigationKey';
 import strings from '../../i18n/strings';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../store/slice/authSlice';
 
-export default function SelectGender({navigation, route}) {
-  const {userName, mobileNo, birthDate} = route?.params;
-  const [select, setSelect] = useState('');
+export default function SelectGender({navigation}) {
+  const user = useSelector(state => state.auth);
+  const [select, setSelect] = useState(user.userInfo?.gender);
+  const dispatch = useDispatch()
 
   const onPressItem = item => {
     setSelect(item.title);
@@ -23,12 +26,8 @@ export default function SelectGender({navigation, route}) {
     if (select === '') {
       alert(strings.pleaseSelectYourGender);
     } else {
-      navigation.navigate(AuthNav.SelectInterest, {
-        userName: userName,
-        mobileNo: mobileNo,
-        birthDate: birthDate,
-        gender: select,
-      });
+      dispatch(setUser({gender: select}))
+      navigation.navigate(AuthNav.SelectInterest);
     }
   };
   const selectGender = ({item, index}) => {

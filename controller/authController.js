@@ -117,7 +117,6 @@ const googleLogin = asyncHandler(async (req, res) => {
   const data = {
     condition: {
       email,
-      token,
       active: 1
     },
     defaults: {

@@ -7,11 +7,9 @@ import {
   statusCodes,
   isErrorWithCode,
   isSuccessResponse,
-  isNoSavedCredentialFoundResponse,
   GoogleSignin
 } from '@react-native-google-signin/google-signin';
 
-// custom import
 import FSafeAreaView from '../../components/common/FSafeAreaView';
 import FHeader from '../../components/common/FHeader';
 import KeyBoardAvoidWrapper from '../../components/common/KeyBoardAvoidWrapper';
@@ -26,6 +24,8 @@ import {AuthNav} from '../../navigation/navigationKey';
 import {getAsyncStorageData} from '../../utils/AsyncStorage';
 import libPhoneNumber from 'google-libphonenumber'
 import { GOOGLE_CLIENT_ID } from '@env'
+import { useGoogleLoginMutation, useSendOtpMutation } from '../../store/slice/api/authApiSlice';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
@@ -39,6 +39,8 @@ export default function LogIn({navigation}) {
   const [countryCodeLib, setCountryCodeLib] = useState('IN');
   const [countryFlag, setCountryFlag] = useState(null)
   const [data, setData] = useState('');
+  const [googleLogin, { isLoading, error: loginError }] = useGoogleLoginMutation();
+  const [sendOtp] = useSendOtpMutation()
 
   const openCountryPicker = () => setVisiblePiker(true);
   const closeCountryPicker = () => setVisiblePiker(false);
@@ -69,8 +71,19 @@ export default function LogIn({navigation}) {
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
         console.log(response)
+        const data = {
+          token: response.data?.idToken,
+          name: response.data?.user?.name,
+          email: response.data?.user?.email
+        }
+        const user = await googleLogin(data)
+        console.log(user)
+        const storage = await EncryptedStorage.setItem('token', user?.data.token)
+        console.log(storage)
+        navigation.navigate(AuthNav.AccountName);
       }
     } catch (error) {
+      console.log(error)
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.ONE_TAP_START_FAILED:

@@ -11,11 +11,15 @@ import {moderateScale} from '../../common/constants';
 import {SelectInterestData} from '../../api/constant';
 import StepIndicator from '../../components/Home/StepIndicator';
 import {AuthNav} from '../../navigation/navigationKey';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../store/slice/authSlice';
 
-export default function SelectInterest({navigation, route}) {
-  const {userName, mobileNo, birthDate, gender} = route?.params;
+export default function SelectInterest({navigation}) {
+  const user = useSelector(state => state.auth)
+  const dispatch = useDispatch()
+  console.log(user.userInfo)
+  const [selectedChips, setSelectedChips] = useState(user.userInfo.interest);
 
-  const [selectedChips, setSelectedChips] = useState([]);
   const renderChips = ({item, index}) => {
     return (
       <TouchableOpacity
@@ -45,13 +49,8 @@ export default function SelectInterest({navigation, route}) {
   };
   const onPressNext = () => {
     if (selectedChips.length === 5 || selectedChips.length > 5) {
-      navigation.navigate(AuthNav.UploadPhoto, {
-        userName: userName,
-        mobileNo: mobileNo,
-        birthDate: birthDate,
-        gender: gender,
-        interest: selectedChips,
-      });
+      dispatch(setUser({interest: selectedChips}))
+      navigation.navigate(AuthNav.UploadPhoto);
     } else {
       alert(strings.pleaseSelectAtLeastYourInterest);
     }
