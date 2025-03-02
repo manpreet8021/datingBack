@@ -25,10 +25,10 @@ import strings from '../../i18n/strings';
 import {AuthNav} from '../../navigation/navigationKey';
 import {getAsyncStorageData} from '../../utils/AsyncStorage';
 import libPhoneNumber from 'google-libphonenumber'
-
+import { GOOGLE_CLIENT_ID } from '@env'
 
 GoogleSignin.configure({
-  webClientId: '876614577382-n30pfiha3ksk18sc89g5spac1dh8p8m5.apps.googleusercontent.com',
+  webClientId: GOOGLE_CLIENT_ID,
 });
 
 export default function LogIn({navigation}) {
@@ -68,7 +68,7 @@ export default function LogIn({navigation}) {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
-      } else if (isNoSavedCredentialFoundResponse(response)) {
+        console.log(response)
       }
     } catch (error) {
       if (isErrorWithCode(error)) {

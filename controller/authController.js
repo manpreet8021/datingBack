@@ -21,6 +21,12 @@ const validateOtpSchema = Joi.object({
   otp: Joi.string().length(4).pattern(/^[0-9]+$/).required(),
 })
 
+const validateGoogleLoginSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().required(),
+  token: Joi.string().required(),
+})
+
 const sendOtp = asyncHandler(async (req, res) => {
   const { error } = sendOtpValidationSchema.validate(req.body, {
     abortEarly: false,
@@ -98,7 +104,43 @@ const updateUserDetail = asyncHandler(async (req, res) => {
 
 })
 
+const googleLogin = asyncHandler(async (req, res) => {
+  const {error} = validateGoogleLoginSchema.validate(req.body, {abortEarly:false})
+
+  if (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+
+  const { token, name, email } = req.body;
+
+  const data = {
+    condition: {
+      email,
+      token,
+      active: 1
+    },
+    defaults: {
+      token,
+      email,
+      name,
+      authtype: 'google'
+    }
+  }
+
+  const user = await checkOrCreateUser(data)
+
+  const response = {
+    isNewData: user.isNewRecord,
+    name: user.name,
+    token: generateToken(user.id)
+  }
+
+  res.status(200).json(response);
+})
+
 export {
   sendOtp,
-  validateOtp
+  validateOtp,
+  googleLogin
 };

@@ -1,4 +1,4 @@
-import userApiSlice from "./api/userApiSlice";
+import authApiSlice from "./api/authApiSlice";
 
 const { createSlice } = require("@reduxjs/toolkit")
 
@@ -19,39 +19,21 @@ const authSlice = createSlice({
     },
     extraReducers(builder) {
         builder.addMatcher(
-            userApiSlice.endpoints.login.matchFulfilled,
+            authApiSlice.endpoints.sendOtp.matchFulfilled,
             (state, { payload }) => {
                 state.userInfo = payload
             }
         ),
         builder.addMatcher(
-            userApiSlice.endpoints.googleLogin.matchFulfilled,
+            authApiSlice.endpoints.googleLogin.matchFulfilled,
             (state, { payload }) => {
                 state.userInfo = payload
             }
         ),
         builder.addMatcher(
-            userApiSlice.endpoints.signup.matchFulfilled,
+            authApiSlice.endpoints.validateOtp.matchFulfilled,
             (state, {payload}) => {
                 state.userInfo = payload
-            }
-        )
-        builder.addMatcher(
-            userApiSlice.endpoints.getInfo.matchFulfilled,
-            (state, {payload}) => {
-                state.userInfo = payload
-            }
-        ),
-        builder.addMatcher(
-            userApiSlice.endpoints.logout.matchFulfilled,
-            (state, {payload}) => {
-                state.userInfo = null
-            }
-        ),
-        builder.addMatcher(
-            userApiSlice.endpoints.getInfo.matchRejected,
-            (state, {payload}) => {
-                state.userInfo = null
             }
         )
     }
