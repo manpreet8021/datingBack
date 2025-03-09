@@ -1,5 +1,4 @@
 import express from 'express';
-import { adminProtect, protect } from '../middleware/authMiddleware.js';
 import LookUpRoute from './lookUpRoute.js';
 import AuthRoute from './authRoute.js';
 

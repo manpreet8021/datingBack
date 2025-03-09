@@ -56,15 +56,6 @@ const addLookUpValue = asyncHandler(async (req, res) => {
   }
 });
 
-const getRetreatValue = asyncHandler(async (req, res) => {
-  const getRetreatValues = await getRetreatLookUpValues();
-  let returnValue = {};
-  getRetreatValues.map((data) => {
-    returnValue[data.name] = data.data;
-  });
-  res.status(200).json(returnValue);
-});
-
 export {
   addLookUpData,
   addLookUpValue

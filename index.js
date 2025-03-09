@@ -1,6 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-// import cloudinary from 'cloudinary';
+import cloudinary from 'cloudinary';
 import cors from 'cors';
 import { connectDb } from './config/database.js';
 import dotenv from 'dotenv'
@@ -11,12 +11,12 @@ const app = express();
 dotenv.config();
 connectDb();
 
-// cloudinary.v2.config({
-//   cloud_name: process.env.CLOUDNAIRY_NAME,
-//   api_key: process.env.CLOUDNAIRY_API_KEY,
-//   api_secret: process.env.CLOUDNAIRY_SECRET_KEY,
-//   secure: true
-// })
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDNAIRY_NAME,
+  api_key: process.env.CLOUDNAIRY_API_KEY,
+  api_secret: process.env.CLOUDNAIRY_SECRET_KEY,
+  secure: true
+})
 
 app.use(cors());
 

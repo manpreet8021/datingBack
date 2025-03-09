@@ -3,7 +3,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import {updateOtpActive, insertOtp} from "../model/otpLogModel.js";
 import twilio from 'twilio'
-import { checkOrCreateUser } from "../model/userModel.js";
+import { checkOrCreateUser, updateUser } from "../model/userModel.js";
 import { generateToken } from "../config/jwtTojen.js";
 
 const validatePhoneNumber = (phone, countryCode) => {
@@ -25,6 +25,13 @@ const validateGoogleLoginSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   token: Joi.string().required(),
+})
+
+const validateUserUpdateSchema = Joi.object({
+  name: Joi.string().required(),
+  dob: Joi.string().required(),
+  gender: Joi.string().required(),
+  interest: Joi.array().items(Joi.number().integer().positive().required()).min(5).required()
 })
 
 const sendOtp = asyncHandler(async (req, res) => {
@@ -101,11 +108,37 @@ const validateOtp = asyncHandler(async (req, res) => {
 });
 
 const updateUserDetail = asyncHandler(async (req, res) => {
+  const { error } = await validateUserUpdateSchema(req.body, { abortEarly: false })
 
+  if(error) {
+    res.status(400);
+    throw new Error(error.message)
+  }
+
+  const transaction = await sequelize.transaction();
+
+  const { name, dob, gender, interest } = req.body
+
+  const interestData = interest.map((interest_id) => ({
+    user_id: req.user.id,
+    interest_id,
+    active: true,
+  }));
+
+  try {
+    await updateUser({ name, dob, gender }, { id: req.user.id }, transaction)
+    await insertInterest(interestData, transaction)
+    await transaction.commit();
+    res.status(200).json()
+  } catch (error) {
+    await transaction.rollback();
+    res.status(400)
+    throw new Error(error.message)
+  }
 })
 
 const googleLogin = asyncHandler(async (req, res) => {
-  const {error} = validateGoogleLoginSchema.validate(req.body, {abortEarly:false})
+  const {error} = validateGoogleLoginSchema.validate(req.body, {abortEarly: false})
 
   if (error) {
     res.status(400);
@@ -141,5 +174,6 @@ const googleLogin = asyncHandler(async (req, res) => {
 export {
   sendOtp,
   validateOtp,
-  googleLogin
+  googleLogin,
+  updateUserDetail
 };

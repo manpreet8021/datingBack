@@ -21,6 +21,7 @@ OtpLog.init(
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: true
     },
     response: {
       type: DataTypes.STRING(34),

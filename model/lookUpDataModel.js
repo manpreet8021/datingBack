@@ -31,7 +31,8 @@ LookUpData.init(
 
 export default LookUpData
 
-export const saveLookUpData = async (values) => await LookUpData.create(values).then((lookup) => {
-  const {id, name} = lookup.toJSON()
-  return {id, name}
-})
+export const saveLookUpData = async (values) => {
+  const lookup = await LookUpData.create(values);
+  const { id, name } = lookup.toJSON();
+  return { id, name };
+}

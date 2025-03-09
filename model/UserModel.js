@@ -34,7 +34,7 @@ User.init(
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      default: true
+      defaultValue: true
     }
   },
   {
@@ -49,5 +49,12 @@ export const checkOrCreateUser = async (data) => {
   const [user] = await User.findOrCreate({ where: data.condition, defaults: data.defaults });
   return user;
 };
-
+export const updateUser = async (data, id) => {
+  const [user] = await User.update(data, { where: {id} });
+  return user
+}
+export const getUser = async (id) => { 
+  const user = await User.findOne({ where: { id } });
+  return user
+}
 export default User

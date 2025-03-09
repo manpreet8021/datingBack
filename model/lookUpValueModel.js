@@ -20,6 +20,10 @@ LookUpValue.init(
       type: DataTypes.STRING,
       allowNull: true
     },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
