@@ -2,14 +2,19 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import cloudinary from 'cloudinary';
 import cors from 'cors';
-import { connectDb } from './config/database.js';
+import { connectDb, seed } from './config/database.js';
 import dotenv from 'dotenv'
 import apiRoutes from './routes/index.js'
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 const app = express();
 dotenv.config();
-connectDb();
+
+const connect = async() => {
+  await connectDb();
+  await seed();
+}
+connect()
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDNAIRY_NAME,

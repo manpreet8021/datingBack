@@ -20,6 +20,10 @@ LookUpValue.init(
       type: DataTypes.STRING,
       allowNull: true
     },
+    color: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     category: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -46,3 +50,5 @@ LookUpValue.belongsTo(LookUpData, {
 });
 
 export default LookUpValue
+
+export const bulkInsert = async(values) => { await LookUpValue.bulkCreate(values) }

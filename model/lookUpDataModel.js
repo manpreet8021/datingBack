@@ -31,8 +31,6 @@ LookUpData.init(
 
 export default LookUpData
 
-export const saveLookUpData = async (values) => {
-  const lookup = await LookUpData.create(values);
-  const { id, name } = lookup.toJSON();
-  return { id, name };
-}
+export const saveBulkLookUpData = async (values) => await LookUpData.bulkCreate(values)
+export const getLookUpData = async () => await LookUpData.findAll()
+export const getLookUpDataById = async (id) => await LookUpData.findByPk(id)

@@ -1,6 +1,6 @@
 import Joi from "joi";
 import asyncHandler from "../middleware/asyncHandler.js";
-import { saveLookUpData } from "../model/lookUpDataModel.js";
+// import { saveLookUpData } from "../model/lookUpDataModel.js";
 
 const addlookUpDataSchema = Joi.object({
   name: Joi.string().required(),
