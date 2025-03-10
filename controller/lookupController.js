@@ -1,6 +1,6 @@
 import Joi from "joi";
 import asyncHandler from "../middleware/asyncHandler.js";
-// import { saveLookUpData } from "../model/lookUpDataModel.js";
+import { getLookUpValueUsingData } from '../model/lookUpValueModel.js'
 
 const addlookUpDataSchema = Joi.object({
   name: Joi.string().required(),
@@ -56,7 +56,16 @@ const addLookUpValue = asyncHandler(async (req, res) => {
   }
 });
 
+const getLookUpValues = asyncHandler(async (req, res) => {
+  const {data} = req.params
+
+  const values = await getLookUpValueUsingData({name: data.toLowerCase(), orderby: 'name'}) 
+
+  res.status(200).json(values)
+})
+
 export {
   addLookUpData,
-  addLookUpValue
+  addLookUpValue,
+  getLookUpValues
 };

@@ -24,12 +24,12 @@ const seed = async () => {
   const lookUpData = [
     {
       id: 1,
-      name: "Gender",
+      name: "gender",
       active: 1,
     },
     {
       id: 2,
-      name: "Interest",
+      name: 'interest',
       active: 1,
     },
   ];
@@ -364,7 +364,6 @@ const seed = async () => {
   ];
   await saveBulkLookUpData(lookUpData);
   await bulkInsert(lookUpValue);
-  console.log("inserted");
 };
 
 export { connectDb, seed };

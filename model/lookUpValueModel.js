@@ -52,3 +52,26 @@ LookUpValue.belongsTo(LookUpData, {
 export default LookUpValue
 
 export const bulkInsert = async(values) => { await LookUpValue.bulkCreate(values) }
+export const getLookUpValueUsingData = async({name, orderby=null, direction='ASC'}) => {
+  try {
+    const queryOption = {
+      attributes: ['id','name','icon','color'],
+      include: [{
+        model: LookUpData,
+        as: 'LookUpDatum',
+        where: {
+          name: name
+        },
+        attributes: []
+      }],
+    }
+
+    if(orderby) {
+      queryOption.order = [[orderby, direction]]
+    }
+    const lookUpValue = await LookUpValue.findAll(queryOption)
+    return lookUpValue
+  } catch (e) {
+    throw e
+  }
+}
