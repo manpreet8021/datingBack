@@ -70,20 +70,16 @@ export default function LogIn({navigation}) {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
-        console.log(response)
         const data = {
           token: response.data?.idToken,
           name: response.data?.user?.name,
           email: response.data?.user?.email
         }
         const user = await googleLogin(data)
-        console.log(user)
-        const storage = await EncryptedStorage.setItem('token', user?.data.token)
-        console.log(storage)
+        await EncryptedStorage.setItem('token', user?.data.token)
         navigation.navigate(AuthNav.AccountName);
       }
     } catch (error) {
-      console.log(error)
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.ONE_TAP_START_FAILED:

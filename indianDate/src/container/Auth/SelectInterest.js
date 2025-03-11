@@ -13,29 +13,31 @@ import StepIndicator from '../../components/Home/StepIndicator';
 import {AuthNav} from '../../navigation/navigationKey';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../../store/slice/authSlice';
+import { useGetLookupValueQuery } from '../../store/slice/api/lookupApiSlice';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function SelectInterest({navigation}) {
   const user = useSelector(state => state.auth)
   const dispatch = useDispatch()
-  console.log(user.userInfo)
   const [selectedChips, setSelectedChips] = useState(user.userInfo.interest);
+  const {data: interest, isLoading} = useGetLookupValueQuery('interest')
 
   const renderChips = ({item, index}) => {
     return (
       <TouchableOpacity
-        onPress={() => onPressChips(item)}
+        onPress={() => onPressChips(item.id)}
         key={item}
         style={[
           localStyle.chipsContainer,
           {borderColor: colors.selectBorder},
-          selectedChips.includes(item) && {
+          selectedChips.includes(item.id) && {
             backgroundColor: colors.secondary1,
           },
         ]}>
         <FText
           type={'b18'}
-          color={selectedChips.includes(item) ? colors.white : colors.primary}>
-          {item}
+          color={selectedChips.includes(item.id) ? colors.white : colors.primary}>
+            <MaterialCommunityIcons name={item.icon} size={12}/> {item.name}
         </FText>
       </TouchableOpacity>
     );
@@ -65,9 +67,9 @@ export default function SelectInterest({navigation}) {
           </FText>
           <View style={localStyle.chipMainContainer}>
             <FlatList
-              data={SelectInterestData}
+              data={interest}
               renderItem={renderChips}
-              showsVerticalScrollIndicator={false}
+              showsVerticalScrollIndicator={true}
               keyExtractor={(item, index) => index.toString()}
               bounces={false}
               numColumns={2}

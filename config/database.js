@@ -1,10 +1,12 @@
 import { sequelize } from "./sequelize.js";
-import LookUpData from "../model/lookUpDataModel.js";
 import { saveBulkLookUpData } from "../model/lookUpDataModel.js";
 import { bulkInsert } from "../model/lookUpValueModel.js";
 import LookUpValue from "../model/lookUpValueModel.js";
 import OtpLog from "../model/otpLogModel.js";
 import User from "../model/userModel.js";
+import LookUpData from "../model/lookUpDataModel.js";
+import UserInterest from "../model/userInterestModel.js";
+import UserImage from "../model/userImagesModel.js";
 
 const connectDb = async () => {
   await sequelize
@@ -15,7 +17,7 @@ const connectDb = async () => {
     );
 
   await sequelize
-    .sync({ force: true }) // This will drop the table and recreate it, be careful in production!
+    .sync({ alter: true }) // This will drop the table and recreate it, be careful in production!
     .then(() => console.log("Database & tables created!"))
     .catch((error) => console.error("Error syncing database:", error));
 };
@@ -40,28 +42,34 @@ const seed = async () => {
       parent: 1,
       name: "Male",
       icon: "male",
+      priority: 1,
       active: 1,
+      color: '#FFFFFF'
     },
     {
       id: 2,
       parent: 1,
       name: "Female",
       icon: "female",
+      priority: 2,
       active: 1,
+      color: '#FFFFFF'
     },
     {
       id: 3,
       parent: 1,
       name: "Other",
+      priority: 3,
       icon: "transgender-outline",
       active: 1,
+      color: '#FFFFFF'
     },
     // SPORTS
     {
       id: 4,
       parent: 2,
       name: "Football",
-      icon: "soccer-ball-o", // FontAwesome
+      icon: "soccer", // FontAwesome
       category: "Sports",
       active: 1,
     },
@@ -287,7 +295,7 @@ const seed = async () => {
       id: 31,
       parent: 2,
       name: "Coding",
-      icon: "laptop-code", // FontAwesome5
+      icon: "laptop", // FontAwesome5
       category: "Tech & Gaming",
       active: 1,
     },
@@ -331,7 +339,7 @@ const seed = async () => {
       id: 36,
       parent: 2,
       name: "Knitting",
-      icon: "yarn", // MaterialCommunityIcons
+      icon: "needle", // MaterialCommunityIcons
       category: "DIY & Crafts",
       active: 1,
     },

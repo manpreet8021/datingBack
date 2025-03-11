@@ -1,7 +1,6 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
 import User from './userModel.js';
-import LookUpValue from './lookUpValueModel.js';
 
 class UserImage extends Model {}
 
@@ -50,3 +49,6 @@ UserImage.belongsTo(User, {
 });
 
 export default UserImage
+export const insertImages = async(image, transaction) => {
+  const userImage = await UserImage.bulkCreate(image, { transaction });
+}

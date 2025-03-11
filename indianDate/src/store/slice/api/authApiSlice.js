@@ -19,9 +19,10 @@ const userApiSlice = apiSlice.injectEndpoints({
             })
         }),
         updateUserDetail: builder.mutation({
-            query: () => ({
-                url: 'auth/updateUser',
+            query: (data) => ({
+                url: 'auth/',
                 method: 'PUT',
+                body: data,
                 credentials: 'include'
             }),
         }),

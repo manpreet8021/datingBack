@@ -8,6 +8,6 @@ const router = express.Router()
 router.route('/sendOtp').post(sendOtp)
 router.route('/validateOtp').post(validateOtp)
 router.route('/googleLogin').post(googleLogin)
-router.route('/updateUserDetail').post(protect, upload.array('image', 5), updateUserDetail)
+router.route('/').put(protect, upload.fields([{name: 'image', maxCount: 5}, {name: 'profile', maxCount: 1}]), updateUserDetail)
 
 export default router

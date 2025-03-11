@@ -59,7 +59,9 @@ const addLookUpValue = asyncHandler(async (req, res) => {
 const getLookUpValues = asyncHandler(async (req, res) => {
   const {data} = req.params
 
-  const values = await getLookUpValueUsingData({name: data.toLowerCase(), orderby: 'name'}) 
+  const orderby = data.toLowerCase() === 'interest' ? 'name' : 'priority'
+
+  const values = await getLookUpValueUsingData({name: data.toLowerCase(), orderby: orderby}) 
 
   res.status(200).json(values)
 })

@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Entypo';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
@@ -16,41 +16,47 @@ import {colors, styles} from '../../themes';
 import FText from '../../components/common/FText';
 import strings from '../../i18n/strings';
 import images from '../../assets/images';
+import {useUpdateUserDetailMutation} from '../../store/slice/api/authApiSlice';
 import {
   USER_DATA,
   getHeight,
   getWidth,
   moderateScale,
 } from '../../common/constants';
-import {AddPhotoData, AddPhotosData} from '../../api/constant';
 import {CameraIcon, SmileyEmojiIcon} from '../../assets/svg';
 import StepIndicator from '../../components/Home/StepIndicator';
 import FButton from '../../components/common/FButton';
 import VerifiedModal from '../../components/modal/VerifiedModal';
 import {StackNav, TabNav} from '../../navigation/navigationKey';
-import {setAsyncStorageData, setAuthToken} from '../../utils/AsyncStorage';
+import {useSelector} from 'react-redux';
 
 export default function UploadPhoto({navigation}) {
-
+  const auth = useSelector(state => state.auth);
   const [addImage, setAddImage] = useState([
-    {id: 1, image: {}},
-    {id: 2, image: {}},
-    {id: 3, image: {}},
-    {id: 4, image: {}},
-    {id: 5, image: {}},
+    {id: 0, image: {}, type: 'addImage'},
+    {id: 1, image: {}, type: 'addImage'},
   ]);
+  const [addImages, setAddImages] = useState([
+    {id: 0, image: {}, type: 'addImages'},
+    {id: 1, image: {}, type: 'addImages'},
+    {id: 2, image: {}, type: 'addImages'},
+  ]);
+  const [updateUserDetail, {isLoading}] = useUpdateUserDetailMutation();
   const [selectImage, setSelectImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const AddPhotos = ({item, index}) => {
+  const AddPhotos = React.memo(({image, index, type, onPressGallery}) => {
     return (
       <View>
-        {addImage ? (
-          <View style={localStyle.addPhotoContainer}>
-            <SmileyEmojiIcon />
+        <View style={localStyle.addPhotoContainer}>
+          <ImageBackground
+            source={image.uri ? {uri: image.uri} : null}
+            style={[localStyle.image]}>
             <TouchableOpacity
               style={localStyle.addTextContainer}
-              onPress={() => onPressGallery(item, index)}>
+              onPress={() => {
+                onPressGallery(type, index);
+              }}>
               <Ionicons
                 name={'plus'}
                 size={moderateScale(16)}
@@ -60,36 +66,56 @@ export default function UploadPhoto({navigation}) {
                 {strings.add}
               </FText>
             </TouchableOpacity>
-          </View>
-        ) : (
-          <Image source={{uri: addImage}} />
-        )}
+          </ImageBackground>
+        </View>
       </View>
     );
-  };
+  });
 
-  const onPressGallery = (itm, idx) => {
-    ImageCropPicker.openPicker({
-      mediaType: 'photo',
-      includeBase64: true,
-    }).then(image => {
-      let tmpVar = [...addImage];
-      tmpVar[idx].image.uri = `${image.path}`;
-      tmpVar[idx].image.name = `${image.path.substring(
-        image.path.lastIndexOf('/') + 1,
-      )}`;
-
-      tmpVar[idx].image.type = `${image.mime}`;
-      setAddImage(tmpVar);
-    });
-  };
+  const onPressGallery = useCallback(
+    (type, idx) => {
+      ImageCropPicker.openPicker({
+        mediaType: 'photo',
+        includeBase64: true,
+      }).then(image => {
+        const updatedItem = {
+          image: {
+            uri: image.path,
+            name: image.path.substring(image.path.lastIndexOf('/') + 1),
+            type: image.mime,
+          },
+          type: type,
+        };
+        if (type === 'addImages') {
+          setAddImages(prevImages => {
+            const updatedImages = [...prevImages];
+            const oldItem = prevImages[idx] || {};
+            updatedImages[idx] = {...oldItem, ...updatedItem};
+            return updatedImages;
+          });
+        } else {
+          setAddImage(prevImages => {
+            const updatedImages = [...prevImages];
+            const oldItem = prevImages[idx] || {};
+            updatedImages[idx] = {...oldItem, ...updatedItem};
+            return updatedImages;
+          });
+        }
+      });
+    },
+    [addImage, addImages],
+  );
 
   const onPressChangePhoto = (itm, idx) => {
     ImageCropPicker.openPicker({
       mediaType: 'photo',
       includeBase64: true,
     }).then(images => {
-      setSelectImage(images.path);
+      setSelectImage({
+        uri: images.path,
+        name: images.path.substring(images.path.lastIndexOf('/') + 1),
+        type: images.mime,
+      });
     });
   };
 
@@ -98,17 +124,49 @@ export default function UploadPhoto({navigation}) {
   };
 
   const onPressGetStarted = async () => {
-    await setAuthToken(true);
-    setModalVisible(false);
-    const userData = {
-      userName: userName,
-      mobileNo: mobileNo,
-      birthDate: birthDate,
-      gender: gender,
-      interest: interest,
-      userImage: selectImage,
-    };
-    await setAsyncStorageData(USER_DATA, userData);
+    try {
+      const formData = new FormData();
+      addImages.forEach((item, index) => {
+        if (item.image && item.image.uri) {
+          formData.append('image', {
+            uri: item.image.uri,
+            name: item.image.name,
+            type: item.image.type,
+          });
+        }
+      });
+      addImage.forEach((item, index) => {
+        if (item.image && item.image.uri) {
+          formData.append('image', {
+            uri: item.image.uri,
+            name: item.image.name,
+            type: item.image.type,
+          });
+        }
+      });
+      auth.userInfo.interest.forEach(item => {
+        formData.append('interest', item);
+      });
+      formData.append('name', auth.userInfo.name);
+      formData.append('dob', auth.userInfo.dob);
+      formData.append('gender', auth.userInfo.gender);
+
+      if (selectImage) {
+        formData.append('profile', {
+          uri: selectImage.uri,
+          name: selectImage.name,
+          type: selectImage.type,
+        });
+      }
+      console.log(formData);
+      const response = await updateUserDetail(formData);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setModalVisible(false);
+    }
+    // await setAsyncStorageData(USER_DATA, userData);
     navigation.reset({
       index: 0,
       routes: [{name: StackNav.TabNavigation, userData: userData}],
@@ -124,15 +182,8 @@ export default function UploadPhoto({navigation}) {
           </FText>
           <View style={localStyle.userImageAndAddImage}>
             <ImageBackground
-              source={
-                selectImage ? {uri: selectImage} : images.UserProfileImage
-              }
-              style={[
-                localStyle.userImage,
-                {
-                  borderRadius: moderateScale(12),
-                },
-              ]}>
+              source={selectImage ? {uri: selectImage.uri} : null}
+              style={[localStyle.userImage]}>
               <TouchableOpacity
                 style={localStyle.changePhotoContainer}
                 onPress={() => onPressChangePhoto()}>
@@ -141,19 +192,35 @@ export default function UploadPhoto({navigation}) {
                   type={'S14'}
                   color={colors.white}
                   style={localStyle.changePhotoText}>
-                  {strings.changePhoto}
+                  {selectImage ? strings.changePhoto : strings.addPhoto}
                 </FText>
               </TouchableOpacity>
             </ImageBackground>
             <View>
-              {AddPhotoData.map((item, index) => {
-                return <AddPhotos item={item} key={item.id} index={index} />;
+              {addImage.map((item, index) => {
+                return (
+                  <AddPhotos
+                    image={item.image}
+                    type={item.type}
+                    key={item.id}
+                    index={index}
+                    onPressGallery={onPressGallery}
+                  />
+                );
               })}
             </View>
           </View>
           <View style={localStyle.bottomAddContainer}>
-            {AddPhotosData.map((item, index) => {
-              return <AddPhotos item={item} key={item.id} index={index} />;
+            {addImages.map((item, index) => {
+              return (
+                <AddPhotos
+                  image={item.image}
+                  type={item.type}
+                  key={item.id}
+                  index={index}
+                  onPressGallery={onPressGallery}
+                />
+              );
             })}
           </View>
           <FButton title={strings.next} onPress={onPressNext} />
@@ -181,6 +248,7 @@ const localStyle = StyleSheet.create({
     width: getWidth(215),
     height: getHeight(215),
     ...styles.mr5,
+    backgroundColor: colors.white,
   },
   addPhotoContainer: {
     width: getWidth(100),
@@ -198,7 +266,11 @@ const localStyle = StyleSheet.create({
     borderRadius: moderateScale(32),
     backgroundColor: colors.secondary1,
     width: moderateScale(62),
+    ...styles.rowCenter,
+    ...styles.selfCenter,
     ...styles.mt5,
+    position: 'absolute',
+    bottom: moderateScale(10),
   },
   userImageAndAddImage: {
     ...styles.flexRow,
@@ -214,10 +286,10 @@ const localStyle = StyleSheet.create({
     height: moderateScale(36),
     borderRadius: moderateScale(32),
     ...styles.rowCenter,
-    backgroundColor: colors.transparent,
     position: 'absolute',
     bottom: moderateScale(10),
     ...styles.selfCenter,
+    backgroundColor: colors.secondary1,
   },
   changePhotoText: {
     ...styles.ml5,
@@ -225,5 +297,10 @@ const localStyle = StyleSheet.create({
   image: {
     width: moderateScale(100),
     height: moderateScale(100),
+    borderRadius: moderateScale(16),
+    overflow: 'hidden',
+  },
+  borderRadius: {
+    borderRadius: moderateScale(32),
   },
 });

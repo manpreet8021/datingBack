@@ -40,3 +40,5 @@ UserInterest.belongsTo(LookUpValue, {
 });
 
 export default UserInterest
+
+export const insertInterest = async(value, transaction) => { await UserInterest.bulkCreate(value, { transaction })}

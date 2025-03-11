@@ -7,29 +7,32 @@ import FHeader from '../../components/common/FHeader';
 import {colors, styles} from '../../themes';
 import {getHeight, getWidth, moderateScale} from '../../common/constants';
 import FText from '../../components/common/FText';
-import {SelectGenderData} from '../../api/constant';
 import StepIndicator from '../../components/Home/StepIndicator';
 import {AuthNav} from '../../navigation/navigationKey';
 import strings from '../../i18n/strings';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../../store/slice/authSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {setUser} from '../../store/slice/authSlice';
+import {useGetLookupValueQuery} from '../../store/slice/api/lookupApiSlice';
 
 export default function SelectGender({navigation}) {
   const user = useSelector(state => state.auth);
   const [select, setSelect] = useState(user.userInfo?.gender);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const {data: genderData, isLoading} = useGetLookupValueQuery('gender');
 
   const onPressItem = item => {
-    setSelect(item.title);
+    setSelect(item.id);
   };
+
   const onPressNext = () => {
     if (select === '') {
       alert(strings.pleaseSelectYourGender);
     } else {
-      dispatch(setUser({gender: select}))
+      dispatch(setUser({gender: select}));
       navigation.navigate(AuthNav.SelectInterest);
     }
   };
+
   const selectGender = ({item, index}) => {
     return (
       <TouchableOpacity
@@ -37,11 +40,10 @@ export default function SelectGender({navigation}) {
         style={[
           localStyle.genderContainer,
           {
-            borderColor:
-              select === item.title ? colors.secondary1 : colors.white,
+            borderColor: select === item.id ? colors.secondary1 : colors.white,
           },
         ]}>
-        {select === item.title ? (
+        {select === item.id ? (
           <Ionicons
             name={'checkmark-circle'}
             color={colors.secondary1}
@@ -55,21 +57,22 @@ export default function SelectGender({navigation}) {
             localStyle.iconBg,
             {
               backgroundColor:
-                select === item.title ? colors.secondary1 : colors.primary,
+                select === item.id ? colors.secondary1 : colors.primary,
             },
           ]}>
           <Ionicons
-            name={item.iconName}
+            name={item.icon}
             size={moderateScale(32)}
-            color={colors.white}
+            color={item.color}
           />
         </View>
         <FText type={'M16'} color={colors.primary} style={localStyle.titleText}>
-          {item.title}
+          {item.name}
         </FText>
       </TouchableOpacity>
     );
   };
+
   return (
     <FSafeAreaView>
       <FHeader />
@@ -78,14 +81,16 @@ export default function SelectGender({navigation}) {
           <FText type={'B24'} color={colors.primary} align={'center'}>
             {strings.whatIsYourGender}
           </FText>
-          <FlatList
-            data={SelectGenderData}
-            renderItem={selectGender}
-            horizontal
-            keyExtractor={(item, index) => index.toString()}
-            showsHorizontalScrollIndicator={false}
-            bounces={false}
-          />
+          {!isLoading && (
+            <FlatList
+              data={genderData}
+              renderItem={selectGender}
+              numColumns={2}
+              keyExtractor={(item, index) => index.toString()}
+              showsHorizontalScrollIndicator={false}
+              bounces={false}
+            />
+          )}
         </View>
         <View>
           <StepIndicator step={3} rightIcon onPressNext={onPressNext} />

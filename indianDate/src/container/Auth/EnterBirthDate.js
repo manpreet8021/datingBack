@@ -11,21 +11,24 @@ import {AuthNav} from '../../navigation/navigationKey';
 import FText from '../../components/common/FText';
 import strings from '../../i18n/strings';
 import StepIndicator from '../../components/Home/StepIndicator';
-import { getHeight, moderateScale} from '../../common/constants';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../../store/slice/authSlice';
+import {getHeight, moderateScale} from '../../common/constants';
+import {useDispatch, useSelector} from 'react-redux';
+import {setUser} from '../../store/slice/authSlice';
 
 export default function EnterBirthDate({navigation}) {
-  const user = useSelector(state => state.auth)
-  const dispatch = useDispatch()
-  
+  const user = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
   const [selectedDate, setSelectedDate] = useState(user.userInfo?.dob);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const onPressNext = async () => {
-    console.log(selectedDate)
-    dispatch(setUser({dob: selectedDate}))
-    navigation.navigate(AuthNav.SelectGender);
+    if (selectedDate === '') {
+      alert(strings.pleaseEnterYourBirthDate);
+    } else {
+      dispatch(setUser({dob: selectedDate}));
+      navigation.navigate(AuthNav.SelectGender);
+    }
   };
 
   const handleConfirm = date => {

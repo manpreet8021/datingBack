@@ -5,6 +5,10 @@ import {updateOtpActive, insertOtp} from "../model/otpLogModel.js";
 import twilio from 'twilio'
 import { checkOrCreateUser, updateUser } from "../model/userModel.js";
 import { generateToken } from "../config/jwtTojen.js";
+import { sequelize } from "../config/sequelize.js";
+import { insertInterest } from "../model/userInterestModel.js";
+import { imageUpload } from "../config/imageUpload.js";
+import { insertImages } from "../model/userImagesModel.js";
 
 const validatePhoneNumber = (phone, countryCode) => {
   const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
@@ -108,13 +112,16 @@ const validateOtp = asyncHandler(async (req, res) => {
 });
 
 const updateUserDetail = asyncHandler(async (req, res) => {
-  const { error } = await validateUserUpdateSchema(req.body, { abortEarly: false })
-
+  const { error } = validateUserUpdateSchema.validate(req.body, { abortEarly: false })
   if(error) {
     res.status(400);
     throw new Error(error.message)
   }
 
+  const imageInfo = await imageUpload(req.files.profile, 'profile', req.user.id)
+  const imagesInfo = await uploadMultipleImages(req.files.image, 'profile', req.user.id)
+
+  const imageValue = [...imageInfo, ...imagesInfo]
   const transaction = await sequelize.transaction();
 
   const { name, dob, gender, interest } = req.body
@@ -126,10 +133,11 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   }));
 
   try {
-    await updateUser({ name, dob, gender }, { id: req.user.id }, transaction)
+    await updateUser({ name, dob, gender }, req.user.id, transaction)
     await insertInterest(interestData, transaction)
+    await insertImages(imageValue, transaction)
     await transaction.commit();
-    res.status(200).json()
+    res.status(200).json({'updated': true})
   } catch (error) {
     await transaction.rollback();
     res.status(400)

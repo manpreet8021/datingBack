@@ -28,6 +28,10 @@ LookUpValue.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    priority: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,

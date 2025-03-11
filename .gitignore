@@ -204,3 +204,4 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 .env.prod
+temp/

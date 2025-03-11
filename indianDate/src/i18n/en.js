@@ -48,6 +48,7 @@ export default {
   add: 'Add',
   next: 'Next',
   changePhoto: 'Change Photo',
+  addPhoto: 'Add Photo',
   youVerified: 'You’re Verified',
   yourAccountIsVerifiedLetStartMakeFriends:
     'Your account is verified, let’s start make friends!',

@@ -6,15 +6,26 @@ import { connectDb, seed } from './config/database.js';
 import dotenv from 'dotenv'
 import apiRoutes from './routes/index.js'
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
+import fs from 'fs';
 
 const app = express();
 dotenv.config();
 
 const connect = async() => {
   await connectDb();
-  await seed();
+  // await seed();
 }
 connect()
+
+fs.access('./temp', fs.constants.F_OK, (err) => {
+  if (err) {
+    fs.mkdir('./temp', { recursive: true }, (err) => {
+      if (err) {
+        console.error('Error creating directory:', err);
+      }
+    });
+  }
+})
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDNAIRY_NAME,

@@ -4,8 +4,8 @@ import { getUser } from "../model/userModel.js";
 
 const protect = asyncHandler(async(req, res, next) => {
     let token = '';
-    token = verifyToken(req.headers.token)
-
+    console.log(req)
+    token = verifyToken(req.headers.authorization)
     if(token) {
         const user = await getUser(token.id);
         if(user) {
@@ -13,7 +13,6 @@ const protect = asyncHandler(async(req, res, next) => {
             next();
         } else {
             res.status(401);
-            res.clearCookie('PEPRELIER-AUTH');
             throw new Error("Unauthorized")
         }
     } else {

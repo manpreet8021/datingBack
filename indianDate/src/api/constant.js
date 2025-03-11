@@ -72,41 +72,6 @@ export const SelectInterestData = [
   '💪 Gym & Fitness',
 ];
 
-export const AddPhotoData = [
-  {
-    id: 1,
-    svgIcon: <SmileyEmojiIcon />,
-    name: strings.add,
-    icon: 'plus',
-  },
-  {
-    id: 2,
-    svgIcon: <SmileyEmojiIcon />,
-    name: strings.add,
-    icon: 'plus',
-  },
-];
-export const AddPhotosData = [
-  {
-    id: 3,
-    svgIcon: <SmileyEmojiIcon />,
-    name: strings.add,
-    icon: 'plus',
-  },
-  {
-    id: 4,
-    svgIcon: <SmileyEmojiIcon />,
-    name: strings.add,
-    icon: 'plus',
-  },
-  {
-    id: 5,
-    svgIcon: <SmileyEmojiIcon />,
-    name: strings.add,
-    icon: 'plus',
-  },
-];
-
 export const postData = [
   {
     id: 1,

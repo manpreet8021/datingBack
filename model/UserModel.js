@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
+import LookUpValue from './lookUpValueModel.js';
 
 class User extends Model {}
 
@@ -23,6 +24,10 @@ User.init(
       allowNull: true,
       unique: true
     },
+    dob: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     authtype: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -35,7 +40,7 @@ User.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true
-    }
+    },
   },
   {
     sequelize, // The database connection instance
@@ -44,13 +49,16 @@ User.init(
     timestamps: true, // Whether to add timestamps (createdAt, updatedAt)
   }
 );
+User.belongsTo(LookUpValue, {
+  foreignKey: 'gender'
+});
 
 export const checkOrCreateUser = async (data) => {
   const [user] = await User.findOrCreate({ where: data.condition, defaults: data.defaults });
   return user;
 };
-export const updateUser = async (data, id) => {
-  const [user] = await User.update(data, { where: {id} });
+export const updateUser = async (data, id, transaction) => {
+  const [user] = await User.update(data, { where: {id}, transaction });
   return user
 }
 export const getUser = async (id) => { 
