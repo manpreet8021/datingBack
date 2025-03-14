@@ -29,6 +29,7 @@ import FButton from '../../components/common/FButton';
 import VerifiedModal from '../../components/modal/VerifiedModal';
 import {StackNav, TabNav} from '../../navigation/navigationKey';
 import {useSelector} from 'react-redux';
+import { setAsyncStorageData } from '../../utils/AsyncStorage';
 
 export default function UploadPhoto({navigation}) {
   const auth = useSelector(state => state.auth);
@@ -41,36 +42,10 @@ export default function UploadPhoto({navigation}) {
     {id: 1, image: {}, type: 'addImages'},
     {id: 2, image: {}, type: 'addImages'},
   ]);
+
   const [updateUserDetail, {isLoading}] = useUpdateUserDetailMutation();
   const [selectImage, setSelectImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const AddPhotos = React.memo(({image, index, type, onPressGallery}) => {
-    return (
-      <View>
-        <View style={localStyle.addPhotoContainer}>
-          <ImageBackground
-            source={image.uri ? {uri: image.uri} : null}
-            style={[localStyle.image]}>
-            <TouchableOpacity
-              style={localStyle.addTextContainer}
-              onPress={() => {
-                onPressGallery(type, index);
-              }}>
-              <Ionicons
-                name={'plus'}
-                size={moderateScale(16)}
-                color={colors.white}
-              />
-              <FText type={'S14'} color={colors.white}>
-                {strings.add}
-              </FText>
-            </TouchableOpacity>
-          </ImageBackground>
-        </View>
-      </View>
-    );
-  });
 
   const onPressGallery = useCallback(
     (type, idx) => {
@@ -120,10 +95,6 @@ export default function UploadPhoto({navigation}) {
   };
 
   const onPressNext = async () => {
-    setModalVisible(true);
-  };
-
-  const onPressGetStarted = async () => {
     try {
       const formData = new FormData();
       addImages.forEach((item, index) => {
@@ -158,20 +129,49 @@ export default function UploadPhoto({navigation}) {
           type: selectImage.type,
         });
       }
-      console.log(formData);
       const response = await updateUserDetail(formData);
-      console.log(response);
+      await setAsyncStorageData(USER_DATA, response);
+      setModalVisible(true);
     } catch (error) {
       console.log(error);
-    } finally {
-      setModalVisible(false);
     }
-    // await setAsyncStorageData(USER_DATA, userData);
+  };
+
+  const onPressGetStarted = async () => {
+    setModalVisible(false);
     navigation.reset({
       index: 0,
-      routes: [{name: StackNav.TabNavigation, userData: userData}],
+      routes: [{name: StackNav.TabNavigation}],
     });
   };
+
+  const AddPhotos = React.memo(({image, index, type, onPressGallery}) => {
+    return (
+      <View>
+        <View style={localStyle.addPhotoContainer}>
+          <ImageBackground
+            source={image.uri ? {uri: image.uri} : null}
+            style={[localStyle.image]}>
+            <TouchableOpacity
+              style={localStyle.addTextContainer}
+              onPress={() => {
+                onPressGallery(type, index);
+              }}>
+              <Ionicons
+                name={'plus'}
+                size={moderateScale(16)}
+                color={colors.white}
+              />
+              <FText type={'S14'} color={colors.white}>
+                {strings.add}
+              </FText>
+            </TouchableOpacity>
+          </ImageBackground>
+        </View>
+      </View>
+    );
+  });
+
   return (
     <FSafeAreaView style={localStyle.mainBgContainer}>
       <FHeader />

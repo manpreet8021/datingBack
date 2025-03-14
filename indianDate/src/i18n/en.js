@@ -170,4 +170,6 @@ export default {
   youAndAlfredoLikedEachOther: 'You and Alfredo liked each other!',
   sendMessage: 'Send a message',
   keepSwiping: 'Keep swiping',
+  accountCreated: 'Account Created',
+  accountCreatedDesc: 'Your account has been created successfully. Let\'s find your companion.',
 };

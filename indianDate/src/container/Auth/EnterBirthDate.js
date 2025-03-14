@@ -32,11 +32,8 @@ export default function EnterBirthDate({navigation}) {
   };
 
   const handleConfirm = date => {
-    var expiryDate = date.toISOString().split('T')[0];
-    const day = expiryDate.split('-')[2];
-    const month = expiryDate.split('-')[1];
-    const year = expiryDate.split('-')[0];
-    setSelectedDate(day + '/' + month + '/' + year);
+    var dateOfBirth = date.toISOString().split('T')[0];
+    setSelectedDate(dateOfBirth);
 
     hideDatePicker();
   };
@@ -46,6 +43,13 @@ export default function EnterBirthDate({navigation}) {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
+
+  const formatDate = (value) => {
+    const day = value.split('-')[2];
+    const month = value.split('-')[1];
+    const year = value.split('-')[0];
+     return day + '/' + month + '/' + year;
+  }
 
   return (
     <FSafeAreaView>
@@ -68,7 +72,7 @@ export default function EnterBirthDate({navigation}) {
                 type={'M16'}
                 color={selectedDate ? colors.black : colors.grayScale400}
                 style={styles.ml5}>
-                {selectedDate ? selectedDate : strings.birthDate}
+                {selectedDate ? formatDate(selectedDate) : strings.birthDate}
               </FText>
               <DateTimePicker
                 isVisible={isDatePickerVisible}

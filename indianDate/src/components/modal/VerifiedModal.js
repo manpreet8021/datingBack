@@ -20,14 +20,14 @@ export default function VerifiedModal(props) {
             style={localStyle.verifiedImage}
           />
           <FText type={'B24'} color={colors.black}>
-            {strings.youVerified}
+            {strings.accountCreated}
           </FText>
           <FText
             type={'R16'}
             color={colors.grayScale400}
             align={'center'}
             numOfLines={2}>
-            {strings.yourAccountIsVerifiedLetStartMakeFriends}
+            {strings.accountCreatedDesc}
           </FText>
           <FButton
             title={strings.getStarted}

@@ -7,7 +7,7 @@ import { checkOrCreateUser, updateUser } from "../model/userModel.js";
 import { generateToken } from "../config/jwtTojen.js";
 import { sequelize } from "../config/sequelize.js";
 import { insertInterest } from "../model/userInterestModel.js";
-import { imageUpload } from "../config/imageUpload.js";
+import { imageUpload, uploadMultipleImages } from "../config/imageUpload.js";
 import { insertImages } from "../model/userImagesModel.js";
 
 const validatePhoneNumber = (phone, countryCode) => {
@@ -113,15 +113,17 @@ const validateOtp = asyncHandler(async (req, res) => {
 
 const updateUserDetail = asyncHandler(async (req, res) => {
   const { error } = validateUserUpdateSchema.validate(req.body, { abortEarly: false })
+
   if(error) {
     res.status(400);
     throw new Error(error.message)
   }
 
-  const imageInfo = await imageUpload(req.files.profile, 'profile', req.user.id)
-  const imagesInfo = await uploadMultipleImages(req.files.image, 'profile', req.user.id)
+  const imageInfo = await imageUpload(req.files.profile[0].path, 'profile', req.user.id, 'main')
+  const imagesInfo = await uploadMultipleImages(req.files.image, 'profile', req.user.id, 'secondary')
+  let imageValue = [...imagesInfo]
+  imageValue.push(imageInfo)
 
-  const imageValue = [...imageInfo, ...imagesInfo]
   const transaction = await sequelize.transaction();
 
   const { name, dob, gender, interest } = req.body
@@ -133,11 +135,12 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   }));
 
   try {
-    await updateUser({ name, dob, gender }, req.user.id, transaction)
+    const updatedUser = await updateUser({ name, dob, gender }, req.user.id, transaction)
+    console.log("updated", updatedUser)
     await insertInterest(interestData, transaction)
     await insertImages(imageValue, transaction)
     await transaction.commit();
-    res.status(200).json({'updated': true})
+    res.status(200).json({name: name})
   } catch (error) {
     await transaction.rollback();
     res.status(400)

@@ -13,7 +13,7 @@ dotenv.config();
 
 const connect = async() => {
   await connectDb();
-  // await seed();
+  await seed();
 }
 connect()
 

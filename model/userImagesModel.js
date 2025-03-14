@@ -17,7 +17,7 @@ UserImage.init(
     },
     image_type: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     image_url: {
       type: DataTypes.STRING,
