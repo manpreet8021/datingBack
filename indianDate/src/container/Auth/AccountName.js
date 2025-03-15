@@ -53,7 +53,7 @@ export default function AccountName({navigation}) {
   
   return (
     <FSafeAreaView>
-      <FHeader />
+      <FHeader isHideBack={true}/>
       <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
         <View style={localStyle.mainContainer}>
           <View>

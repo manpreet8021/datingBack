@@ -128,19 +128,18 @@ export default function OnBoarding({navigation}) {
       <View style={styles.selfCenter}>
         <FButton
           onPress={OnPressContinue}
-          title={currentIndex === 2 ? strings.loginWithPhone : strings.continue}
-          frontIcon={currentIndex === 2 ? <CallILeftIcon /> : null}
+          title={currentIndex === 2 ? strings.loginGenericMessage : strings.continue}
         />
-        <FButton
+        {/* <FButton
           onPress={currentIndex === 2 ? null : onPressSignIn}
           title={currentIndex === 2 ? strings.loginWithGoogle : strings.signIn}
           frontIcon={currentIndex === 2 ? <GoogleLeftIcon /> : null}
           bgColor={colors.btnBg}
           color={colors.primary}
-        />
+        /> */}
       </View>
 
-      {currentIndex === 2 ? (
+      {/* {currentIndex === 2 ? (
         <View style={localStyle.bottomTextContainer}>
           <FText type={'M14'} color={colors.backBorder}>
             {strings.donHaveAnAccount}
@@ -151,7 +150,7 @@ export default function OnBoarding({navigation}) {
             </FText>
           </TouchableOpacity>
         </View>
-      ) : null}
+      ) : null} */}
     </FSafeAreaView>
   );
 }

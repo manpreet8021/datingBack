@@ -135,8 +135,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   }));
 
   try {
-    const updatedUser = await updateUser({ name, dob, gender }, req.user.id, transaction)
-    console.log("updated", updatedUser)
+    await updateUser({ name, dob, gender }, req.user.id, transaction)
     await insertInterest(interestData, transaction)
     await insertImages(imageValue, transaction)
     await transaction.commit();

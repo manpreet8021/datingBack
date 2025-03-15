@@ -9,6 +9,7 @@ export default {
   continue: 'Continue',
   signIn: 'Sign In',
   loginWithPhone: 'Login with Phone',
+  loginGenericMessage: 'Login and start your journey',
   loginWithGoogle: 'Login with Google',
   donHaveAnAccount: 'Don’t have an account?',
   signUp: 'Sign Up',

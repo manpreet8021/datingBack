@@ -24,7 +24,13 @@ const authSlice = createSlice({
       (state, {payload}) => {
         state.userInfo = {...state.userInfo, ...payload};
       },
-    );
+    ),
+    builder.addMatcher(
+      authApiSlice.endpoints.validateOtp.matchFulfilled,
+      (state, {payload}) => {
+        state.userInfo = {...state.userInfo, ...payload};
+      }
+    )
   },
 });
 

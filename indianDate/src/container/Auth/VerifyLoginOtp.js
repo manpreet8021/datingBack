@@ -1,111 +1,98 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import CountDown from 'react-native-countdown-component';
 
-// custom import
+import CustomCountDown from '../../components/common/CustomCountDown';
 import {colors, styles} from '../../themes';
 import {moderateScale} from '../../common/constants';
 import Typography from '../../themes/typography';
-import {StackNav} from '../../navigation/navigationKey';
+import {AuthNav, StackNav} from '../../navigation/navigationKey';
 import FSafeAreaView from '../../components/common/FSafeAreaView';
 import KeyBoardAvoidWrapper from '../../components/common/KeyBoardAvoidWrapper';
 import FHeader from '../../components/common/FHeader';
 import FText from '../../components/common/FText';
 import FButton from '../../components/common/FButton';
 import strings from '../../i18n/strings';
-import {setAuthToken} from '../../utils/AsyncStorage';
-import auth from '@react-native-firebase/auth';
-import firebaseApp from '../../utils/FirebaseIntialize';
-import {AuthNav} from '../../navigation/navigationKey';
+import {useValidateOtpMutation} from '../../store/slice/api/authApiSlice';
+import {useSelector} from 'react-redux';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
-export default function VerifyLoginOtp({navigation, route}) {
-  const {number} = route.params || {number: '+917000554235'};
+export default function VerifyLoginOtp({navigation}) {
   const [otp, setOtp] = useState('');
   const [counterId, setCounterId] = useState('1');
-  const [isTimeOver, setIsTimeOver] = useState(false);
-  const [confirmation, setConfirmation] = useState(null);
-
-  // useEffect(() => {
-  //   const subscriber = auth().onAuthStateChanged(setUser);
-  //   return subscriber; // Unsubscribe on unmount
-  // }, []);
-
-  useEffect(() => {
-    if (number) {
-      sendOTP(number);
-    }
-  }, []);
-
-  const sendOTP = async (phone) => {
-    try {
-
-    } catch (error) {
-    }
-  };
+  const [validateOtp, {isLoading}] = useValidateOtpMutation();
+  const auth = useSelector(state => state.auth);
+  const phone = auth.userInfo.phone;
 
   const verifyOTP = async () => {
     try {
-      await confirmation.confirm(otp);
-    } catch (error) {
-    }
-  };
-
-  const onOtpChange = text => setOtp(text);
-
-  const onPressResend = () => {
-
-    setOtp('');
-  }
-
-  const onFinishTimer = () => {
-    if (!isTimeOver) {
-      setIsTimeOver(true);
-    }
-  };
-
-  const onPressVerify = async () => {
-    if(verifyOTP) {
-      await setAuthToken(true);
+      const user = await validateOtp({phone: phone, otp: otp});
+      await EncryptedStorage.setItem('token', user?.data.token);
       navigation.reset({
         index: 0,
-        routes: [{name: StackNav.TabNavigation}],
+        routes: [{ name: AuthNav.AccountName }],
       });
+      
+    } catch (error) {
+      throw new Error(error);
     }
+  };
+
+  const onOtpChange = text => {
+    console.log(text)
+    setOtp(text);
+  };
+
+  const onPressResend = () => {
+    setCounterId(prev => (parseInt(prev) + 1).toString());
+    setOtp('');
+  };
+
+  const onFinishTimer = () => {};
+
+  const onPressVerify = async () => {
+    try {
+      await verifyOTP();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onPressBack = () => {
+    navigation.goBack();
   };
 
   return (
     <FSafeAreaView>
-      <FHeader/>
+      <FHeader goBack={onPressBack} />
       <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
         <View style={localStyle.mainContainer}>
           <View>
             <FText type={'B24'} color={colors.primary} align={'center'}>
               {strings.verifyLogin}
             </FText>
-            <FText type={'R14'} color={colors.lightBlack} align={'center'}>
-              {strings.enterOTPCodeWeSentTo + ' ' + number}
+            <FText
+              type={'R14'}
+              color={colors.lightBlack}
+              align={'center'}
+              style={localStyle.secondHeading}>
+              {strings.enterOTPCodeWeSentTo + ' ' + phone}
             </FText>
             <View style={localStyle.countdownText}>
               <FText type={'R14'} color={colors.lightBlack} align={'center'}>
                 {strings.thisCodeWillExpiredIn}
               </FText>
-              <CountDown
-                id={counterId}
-                until={59}
+              <CustomCountDown
                 onFinish={onFinishTimer}
+                keyId={counterId}
                 digitStyle={{backgroundColor: colors.pinkBg}}
                 digitTxtStyle={localStyle.digitStyle}
-                timeToShow={['M', 'S']}
-                timeLabels={{m: null, s: null}}
-                showSeparator
               />
             </View>
             <OTPInputView
               pinCount={4}
               code={otp}
               onCodeChanged={onOtpChange}
-              autoFocusOnLoad={false}
               codeInputFieldStyle={[
                 localStyle.underlineStyleBase,
                 {
@@ -118,7 +105,7 @@ export default function VerifyLoginOtp({navigation, route}) {
                 borderColor: colors.secondary1,
               }}
               style={localStyle.otpInputViewStyle}
-              secureTextEntry={true}
+              secureTextEntry={false}
             />
             <View style={localStyle.receiveCodeContainer}>
               <FText color={colors.lightBlack} type={'R14'}>
@@ -173,5 +160,9 @@ const localStyle = StyleSheet.create({
   },
   countdownText: {
     ...styles.rowCenter,
+  },
+  secondHeading: {
+    ...styles.rowCenter,
+    ...styles.mt20,
   },
 });

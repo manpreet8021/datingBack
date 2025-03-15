@@ -2,6 +2,7 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {CountryPicker} from "react-native-country-codes-picker";
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import {BASE_URL} from '@env';
 
 import {
   statusCodes,
@@ -26,6 +27,8 @@ import libPhoneNumber from 'google-libphonenumber'
 import { GOOGLE_CLIENT_ID } from '@env'
 import { useGoogleLoginMutation, useSendOtpMutation } from '../../store/slice/api/authApiSlice';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../store/slice/authSlice';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
@@ -40,11 +43,11 @@ export default function LogIn({navigation}) {
   const [countryFlag, setCountryFlag] = useState(null)
   const [data, setData] = useState('');
   const [googleLogin, { isLoading, error: loginError }] = useGoogleLoginMutation();
-  const [sendOtp] = useSendOtpMutation()
+  const [sendOtp, { isLoading: otpLoading, error: otpError }] = useSendOtpMutation();
 
   const openCountryPicker = () => setVisiblePiker(true);
   const closeCountryPicker = () => setVisiblePiker(false);
-
+  const dispatch = useDispatch()
   const onFocusInput = onHighlight => onHighlight(FocusedStyle);
   const onBlurInput = onUnHighlight => onUnHighlight(BlurredStyle);
 
@@ -54,7 +57,9 @@ export default function LogIn({navigation}) {
     setCountryFlag(country.flag);
     closeCountryPicker();
   };
-
+  useEffect(()=>{
+    console.log(BASE_URL)
+  }, [])
   const isValidPhoneNumber = () => {
     try {
       const phoneUtil = libPhoneNumber.PhoneNumberUtil.getInstance();
@@ -77,7 +82,10 @@ export default function LogIn({navigation}) {
         }
         const user = await googleLogin(data)
         await EncryptedStorage.setItem('token', user?.data.token)
-        navigation.navigate(AuthNav.AccountName);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: AuthNav.AccountName }],
+        });        
       }
     } catch (error) {
       if (isErrorWithCode(error)) {
@@ -142,7 +150,18 @@ export default function LogIn({navigation}) {
   };
 
   const onPressLogIn = async () => {
-    isValidPhoneNumber() && navigation.navigate(AuthNav.VerifyLoginOtp, {number: number});
+    try {
+      if (isValidPhoneNumber()) {
+        const data = await sendOtp({phone: number, countryCode: countryCodeLib});
+        console.log(data)
+        dispatch(setUser({phone: number}))
+        navigation.navigate(AuthNav.VerifyLoginOtp);
+      } else {
+        throw new Error("Number is not valid")
+      }
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const onPressSignUp = () => {
@@ -161,7 +180,7 @@ export default function LogIn({navigation}) {
   };
   return (
     <FSafeAreaView>
-      <FHeader />
+      <FHeader isHideBack={true}/>
       <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
         <View style={localStyle.mainContainer}>
           <View>
