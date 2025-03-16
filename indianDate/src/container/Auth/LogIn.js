@@ -2,7 +2,6 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {CountryPicker} from "react-native-country-codes-picker";
 import Ionicon from 'react-native-vector-icons/Ionicons';
-import {BASE_URL} from '@env';
 
 import {
   statusCodes,
@@ -57,9 +56,6 @@ export default function LogIn({navigation}) {
     setCountryFlag(country.flag);
     closeCountryPicker();
   };
-  useEffect(()=>{
-    console.log(BASE_URL)
-  }, [])
   const isValidPhoneNumber = () => {
     try {
       const phoneUtil = libPhoneNumber.PhoneNumberUtil.getInstance();
