@@ -7,6 +7,7 @@ import User from "../model/userModel.js";
 import LookUpData from "../model/lookUpDataModel.js";
 import UserInterest from "../model/userInterestModel.js";
 import UserImage from "../model/userImagesModel.js";
+import Event from "../model/eventModel.js";
 
 const connectDb = async () => {
   await sequelize
@@ -34,6 +35,11 @@ const seed = async () => {
       name: 'interest',
       active: 1,
     },
+    {
+      id: 3,
+      name: 'event',
+      active: 1
+    }
   ];
 
   const lookUpValue = [
@@ -369,6 +375,30 @@ const seed = async () => {
       category: "Vehicles & Racing",
       active: 1,
     },
+    {
+      id: 40,
+      parent: 3,
+      name: 'Travel',
+      active: 1
+    },
+    {
+      id: 41,
+      parent: 3,
+      name: 'Movies',
+      active: 1
+    },
+    {
+      id: 42,
+      parent: 3,
+      name: 'Fantacy',
+      active: 1
+    },
+    {
+      id: 43,
+      parent: 3,
+      name: 'Art',
+      active: 1
+    }
   ];
   await saveBulkLookUpData(lookUpData);
   await bulkInsert(lookUpValue);

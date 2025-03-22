@@ -1,4 +1,4 @@
-import {Image, StyleSheet, View} from 'react-native';
+import { StyleSheet, View} from 'react-native';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 
@@ -7,39 +7,12 @@ import {colors, styles} from '../themes';
 import FText from '../components/common/FText';
 import FSafeAreaView from '../components/common/FSafeAreaView';
 import strings from '../i18n/strings';
-import {USER_DATA, getHeight} from '../common/constants';
-import {SplashGroupIcon} from '../assets/svg';
-import images from '../assets/images';
-import {
-  getAsyncStorageData,
-  initialStorageValueGet,
-} from '../utils/AsyncStorage';
-import {StackNav} from '../navigation/navigationKey';
+import {getHeight} from '../common/constants';
 
 export default function Splash({navigation}) {
   useEffect(() => {
-    SplashScreen?.hide();
-    asyncProcess();
+    SplashScreen?.hide()
   }, []);
-
-  const asyncProcess = async () => {
-    try {
-      let asyncData = await initialStorageValueGet();
-      let {onBoardingValue, acessTokenValue} = asyncData;
-      if (!!asyncData) {
-        if (!!acessTokenValue) {
-          await getAsyncStorageData(USER_DATA);
-          navigation.replace(StackNav.TabNavigation);
-        } else if (!!onBoardingValue) {
-          navigation.replace(StackNav.AuthNavigation);
-        } else {
-          navigation.replace(StackNav.OnBoarding);
-        }
-      }
-    } catch (e) {
-      console.log('error ', e);
-    }
-  };
 
   return (
     <FSafeAreaView style={localStyle.container}>

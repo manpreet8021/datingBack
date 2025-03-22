@@ -5,53 +5,35 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useRef, useState} from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 // custom import
 import FText from '../components/common/FText';
 import FSafeAreaView from '../components/common/FSafeAreaView';
-import {colors, styles} from '../themes';
+import { colors, styles } from '../themes';
 import {
   deviceWidth,
   getHeight,
   getWidth,
   moderateScale,
 } from '../common/constants';
-import {OnBoardingData} from '../api/constant';
+import { OnBoardingData } from '../api/constant';
 import FButton from '../components/common/FButton';
 import strings from '../i18n/strings';
-import {CallIcon, GoogleIcon} from '../assets/svg';
-import {AuthNav} from '../navigation/navigationKey';
-import {setOnBoarding} from '../utils/AsyncStorage';
+import { setOnBoarding } from '../utils/AsyncStorage';
 
-export default function OnBoarding({navigation}) {
+export default function OnBoarding({ navigation }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideRef = useRef(null);
 
-  const _onViewableItemsChanged = useCallback(({viewableItems}) => {
+  const _onViewableItemsChanged = useCallback(({ viewableItems }) => {
     setCurrentIndex(viewableItems[0]?.index);
   }, []);
 
-  const _viewabilityConfig = {itemVisiblePercentThreshold: 50};
-
-  const CallILeftIcon = () => {
-    return (
-      <View style={localStyle.iconBg}>
-        <CallIcon />
-      </View>
-    );
-  };
-
-  const GoogleLeftIcon = () => {
-    return (
-      <View style={localStyle.iconBg}>
-        <GoogleIcon />
-      </View>
-    );
-  };
+  const _viewabilityConfig = { itemVisiblePercentThreshold: 50 };
 
   const RenderItemData = useCallback(
-    ({item, index}) => {
+    ({ item, index }) => {
       return (
         <View style={localStyle.Container}>
           <Image
@@ -83,38 +65,19 @@ export default function OnBoarding({navigation}) {
 
   const OnPressContinue = async () => {
     if (currentIndex === 2) {
-      if (strings.loginWithPhone) {
-        await setOnBoarding(true);
-        navigation.reset({
-          index: 0,
-          routes: [{name: AuthNav.LogIn}],
-        });
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{name: AuthNav.SignIn}],
-        });
-      }
+      await setOnBoarding(true);
     } else {
       slideRef.current._listRef._scrollRef.scrollTo({
         x: deviceWidth * (currentIndex + 1),
       });
     }
   };
-  const onPressSignIn = async () => {
-    await setOnBoarding(true);
-    navigation.reset({
-      index: 0,
-      routes: [{name: AuthNav.LogIn}],
-    });
-  };
-
   return (
     <FSafeAreaView>
       <FlatList
         data={OnBoardingData}
         ref={slideRef}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <RenderItemData item={item} index={index} />
         )}
         keyExtractor={(item, index) => index.toString()}

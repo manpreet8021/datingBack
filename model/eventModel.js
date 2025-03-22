@@ -77,3 +77,4 @@ export default Event
 export const saveBulkEvent = async (values) => await Event.bulkCreate(values)
 export const getEvent = async () => await Event.findAll()
 export const getEventById = async (id) => await Event.findByPk(id)
+export const addEvent = async (data) => await Event.create(data)

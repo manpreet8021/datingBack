@@ -13,8 +13,7 @@ LookUpValue.init(
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      allowNull: false
     },
     icon: {
       type: DataTypes.STRING,
