@@ -77,4 +77,6 @@ export default Event
 export const saveBulkEvent = async (values) => await Event.bulkCreate(values)
 export const getEvent = async () => await Event.findAll()
 export const getEventById = async (id) => await Event.findByPk(id)
+export const getEventByCondition = async(condition) => await Event.findOne({ where: condition })
 export const addEvent = async (data) => await Event.create(data)
+export const updateEvent = async (data, id) => await Event.update(data, {where: {id: id}})
