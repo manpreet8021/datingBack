@@ -21,10 +21,13 @@ import { OnBoardingData } from '../api/constant';
 import FButton from '../components/common/FButton';
 import strings from '../i18n/strings';
 import { setOnBoarding } from '../utils/AsyncStorage';
+import { useDispatch } from 'react-redux';
+import { setShowScreen } from '../store/slice/authSlice';
 
 export default function OnBoarding({ navigation }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideRef = useRef(null);
+  const dispatch = useDispatch();
 
   const _onViewableItemsChanged = useCallback(({ viewableItems }) => {
     setCurrentIndex(viewableItems[0]?.index);
@@ -66,6 +69,7 @@ export default function OnBoarding({ navigation }) {
   const OnPressContinue = async () => {
     if (currentIndex === 2) {
       await setOnBoarding(true);
+      dispatch(setShowScreen('Login'));
     } else {
       slideRef.current._listRef._scrollRef.scrollTo({
         x: deviceWidth * (currentIndex + 1),

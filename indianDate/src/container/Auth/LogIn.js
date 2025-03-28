@@ -17,17 +17,17 @@ import {colors, styles} from '../../themes';
 import FText from '../../components/common/FText';
 import FInput from '../../components/common/FInput';
 import FButton from '../../components/common/FButton';
-import {USER_DATA, getHeight, moderateScale} from '../../common/constants';
+import {ACCOUNT_PARTIAL_CREATED, USER_DATA, getHeight, moderateScale} from '../../common/constants';
 import {AppleIcon, GoogleIcon} from '../../assets/svg';
 import strings from '../../i18n/strings';
 import {AuthNav} from '../../navigation/navigationKey';
-import {getAsyncStorageData} from '../../utils/AsyncStorage';
+import {getAsyncStorageData, setAsyncStorageData} from '../../utils/AsyncStorage';
 import libPhoneNumber from 'google-libphonenumber'
 import { GOOGLE_CLIENT_ID } from '@env'
 import { useGoogleLoginMutation, useSendOtpMutation } from '../../store/slice/api/authApiSlice';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../store/slice/authSlice';
+import { setUser, setShowScreen } from '../../store/slice/authSlice';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
@@ -78,6 +78,7 @@ export default function LogIn({navigation}) {
         }
         const user = await googleLogin(data)
         await EncryptedStorage.setItem('token', user?.data.token)
+        await setAsyncStorageData(ACCOUNT_PARTIAL_CREATED, true)
         navigation.reset({
           index: 0,
           routes: [{ name: AuthNav.AccountName }],
@@ -160,10 +161,6 @@ export default function LogIn({navigation}) {
     }
   };
 
-  const onPressSignUp = () => {
-    navigation.navigate(AuthNav.SignUp);
-  };
-
   const SocialBtn = ({title, frontIcon, onPress = () => {}}) => {
     return (
       <TouchableOpacity style={localStyle.btnContainer} onPress={onPress}>
@@ -223,11 +220,11 @@ export default function LogIn({navigation}) {
               <FText type={'M14'} color={colors.backBorder}>
                 {strings.donHaveAnAccount}
               </FText>
-              <TouchableOpacity onPress={onPressSignUp}>
+              {/* <TouchableOpacity onPress={onPressSignUp}>
                 <FText type={'M14'} color={colors.secondary1}>
                   {strings.signUp}
                 </FText>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </View>

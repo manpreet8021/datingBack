@@ -18,6 +18,7 @@ import strings from '../../i18n/strings';
 import images from '../../assets/images';
 import {useUpdateUserDetailMutation} from '../../store/slice/api/authApiSlice';
 import {
+  ACCOUNT_CREATED,
   USER_DATA,
   getHeight,
   getWidth,
@@ -28,11 +29,14 @@ import StepIndicator from '../../components/Home/StepIndicator';
 import FButton from '../../components/common/FButton';
 import VerifiedModal from '../../components/modal/VerifiedModal';
 import {StackNav, TabNav} from '../../navigation/navigationKey';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { setAsyncStorageData } from '../../utils/AsyncStorage';
+import { setShowScreen } from '../../store/slice/authSlice';
 
 export default function UploadPhoto({navigation}) {
   const auth = useSelector(state => state.auth);
+  const dispatch = useDispatch()
+
   const [addImage, setAddImage] = useState([
     {id: 0, image: {}, type: 'addImage'},
     {id: 1, image: {}, type: 'addImage'},
@@ -130,6 +134,7 @@ export default function UploadPhoto({navigation}) {
         });
       }
       const response = await updateUserDetail(formData);
+      await setAsyncStorageData(ACCOUNT_CREATED, true);
       await setAsyncStorageData(USER_DATA, response);
       setModalVisible(true);
     } catch (error) {
@@ -139,10 +144,7 @@ export default function UploadPhoto({navigation}) {
 
   const onPressGetStarted = async () => {
     setModalVisible(false);
-    navigation.reset({
-      index: 0,
-      routes: [{name: StackNav.TabNavigation}],
-    });
+    dispatch(setShowScreen('AppScreen'))
   };
 
   const AddPhotos = React.memo(({image, index, type, onPressGallery}) => {

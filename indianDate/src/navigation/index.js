@@ -7,10 +7,13 @@ import { initialStorageValueGet } from '../utils/AsyncStorage';
 import OnBoarding from '../container/OnBoarding';
 import AppNavigation from './type/AppNavigation';
 import AuthNavigation from './type/AuthNavigation';
+import { setShowScreen } from '../store/slice/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function AppNavigator({navigation}) {
   const [isLoading, setIsLoading] = useState(true)
-  const [showScreen, setShowScreen] = useState('boarding')
+  const auth = useSelector(state => state.auth)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     checkForNavigation()
@@ -19,27 +22,34 @@ export default function AppNavigator({navigation}) {
   const checkForNavigation = async () => {
     try {
       let asyncData = await initialStorageValueGet();
-      let { onBoardingValue, acessTokenValue } = asyncData;
-      if (!!asyncData) {
-        if (!!acessTokenValue) {
-          setShowScreen('loggedIn')
-        } else if (!!onBoardingValue) {
-          setShowScreen('Login')
+      if (!asyncData) {
+        dispatch(setShowScreen('onBoarding'))
+      } else {
+        const { onBoardingValue, accountPartialCreated, accountCreated } = asyncData;
+        if (accountCreated) {
+          dispatch(setShowScreen('AppScreen'));
+        } else if (accountPartialCreated) {
+          dispatch(setShowScreen('loggedIn'))
+        } else if (onBoardingValue) {
+          dispatch(setShowScreen('onBoarding'))
+        } else {
+          dispatch(setShowScreen('loggedIn'))
         }
       }
-      setIsLoading(false)
     } catch (e) {
-      console.log('error ', e);
+      dispatch(setShowScreen('onBoarding'))
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     isLoading ? <Splash /> :
     <NavigationContainer ref={navigationRef}>
       {
-        showScreen === "boarding" ? <OnBoarding /> :
+        auth.showScreen === "onBoarding" ? <OnBoarding /> :
         (
-          showScreen === "loggedIn" ? <AppNavigation /> : <AuthNavigation />
+          auth.showScreen === "AppScreen" ? <AppNavigation /> : <AuthNavigation />
         )
       }
     </NavigationContainer>

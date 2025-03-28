@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ACCESS_TOKEN, ON_BOARDING, THEME} from '../common/constants';
+import {ACCESS_TOKEN, ACCOUNT_CREATED, ACCOUNT_PARTIAL_CREATED, ON_BOARDING, THEME} from '../common/constants';
 
 //get Value
 const initialValueGet = async () => {
@@ -51,12 +51,14 @@ const initialStorageValueGet = async () => {
   let asyncData = await AsyncStorage.multiGet([
     THEME,
     ON_BOARDING,
-    ACCESS_TOKEN,
+    ACCOUNT_CREATED,
+    ACCOUNT_PARTIAL_CREATED
   ]);
   const themeColor = JSON.parse(asyncData[0][1]);
   const onBoardingValue = JSON.parse(asyncData[1][1]);
-  const acessTokenValue = JSON.parse(asyncData[2][1]);
-  return {themeColor, onBoardingValue, acessTokenValue};
+  const accountCreated = JSON.parse(asyncData[2][1])
+  const accountPartialCreated = JSON.parse(asyncData[3][1])
+  return {themeColor, onBoardingValue, accountCreated, accountPartialCreated};
 };
 export {
   initialValueGet,

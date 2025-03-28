@@ -4,7 +4,7 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 
 import CustomCountDown from '../../components/common/CustomCountDown';
 import {colors, styles} from '../../themes';
-import {moderateScale} from '../../common/constants';
+import {ACCOUNT_PARTIAL_CREATED, moderateScale} from '../../common/constants';
 import Typography from '../../themes/typography';
 import {AuthNav, StackNav} from '../../navigation/navigationKey';
 import FSafeAreaView from '../../components/common/FSafeAreaView';
@@ -16,6 +16,7 @@ import strings from '../../i18n/strings';
 import {useValidateOtpMutation} from '../../store/slice/api/authApiSlice';
 import {useSelector} from 'react-redux';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { setAsyncStorageData } from '../../utils/AsyncStorage';
 
 export default function VerifyLoginOtp({navigation}) {
   const [otp, setOtp] = useState('');
@@ -27,7 +28,9 @@ export default function VerifyLoginOtp({navigation}) {
   const verifyOTP = async () => {
     try {
       const user = await validateOtp({phone: phone, otp: otp});
+      console.log(user)
       await EncryptedStorage.setItem('token', user?.data.token);
+      await setAsyncStorageData(ACCOUNT_PARTIAL_CREATED, true)
       navigation.reset({
         index: 0,
         routes: [{ name: AuthNav.AccountName }],

@@ -55,3 +55,5 @@ export const ON_BOARDING = 'ON_BOARDING';
 export const ACCESS_TOKEN = 'ACCESS_TOKEN';
 export const USER_DATA = 'USER_DATA';
 export const USER_ID = 'USER_ID';
+export const ACCOUNT_CREATED = 'ACCOUNT_CREATED';
+export const ACCOUNT_PARTIAL_CREATED = 'ACCOUNT_PARTIAL_CREATED';

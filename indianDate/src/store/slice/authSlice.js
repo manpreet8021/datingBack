@@ -8,6 +8,7 @@ const initialState = {
     gender: '',
     interest: []
   },
+  showScreen: null
 };
 
 const authSlice = createSlice({
@@ -17,6 +18,9 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       state.userInfo = {...state.userInfo, ...action.payload}
     },
+    setShowScreen: (state, action) => {
+      state.showScreen = action.payload
+    }
   },
   extraReducers(builder) {
     builder.addMatcher(
@@ -34,5 +38,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser } = authSlice.actions;
+export const { setUser, setShowScreen } = authSlice.actions;
 export default authSlice.reducer;

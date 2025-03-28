@@ -13,10 +13,8 @@ import MatchDatingScreen from '../container/TabBar/Home/MatchDatingScreen';
 
 // Auth Screen
 import LogIn from '../container/Auth/LogIn';
-import OtpVerify from '../container/Auth/OtpVerify';
 import SelectGender from '../container/Auth/SelectGender';
 import SelectInterest from '../container/Auth/SelectInterest';
-import SignUp from '../container/Auth/SignUp';
 import UploadPhoto from '../container/Auth/UploadPhoto';
 import VerifyLoginOtp from '../container/Auth/VerifyLoginOtp';
 import OnBoarding from '../container/OnBoarding';
@@ -48,8 +46,6 @@ export const StackRoute = {
 
 export const AuthRoute = {
   LogIn,
-  SignUp,
-  OtpVerify,
   AccountName,
   EnterBirthDate,
   SelectGender,
