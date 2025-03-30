@@ -27,6 +27,7 @@ import ExploreScreen from '../container/TabBar/explore/ExploreScreen';
 import AddPhoto from '../container/TabBar/Add/AddPhoto';
 import MatchesScreen from '../container/TabBar/Matches/MatchesScreen';
 import MessageScreen from '../container/TabBar/Message/MessageScreen';
+import AddEventScreen from '../container/TabBar/Home/AddEventScreen';
 
 export const StackRoute = {
   Splash,
@@ -42,6 +43,7 @@ export const StackRoute = {
   MatchesUserDetails,
   MatchDatingScreen,
   StoryView,
+  AddEventScreen
 };
 
 export const AuthRoute = {

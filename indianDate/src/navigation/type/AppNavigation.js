@@ -42,6 +42,9 @@ export default function AppNavigation() {
         name={StackNav.StoryView}
         component={StackRoute.StoryView}
       />
+      <Stack.Screen
+        name={StackNav.AddEvent}
+        component={StackRoute.AddEventScreen} />
     </Stack.Navigator>
   );
 }

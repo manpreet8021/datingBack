@@ -2,6 +2,9 @@ import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import {BASE_URL} from '@env';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { navigate } from '../../../navigation/navigationService';
+import { setShowScreen } from '../authSlice';
+import { removeAsyncStorageData } from '../../../utils/AsyncStorage';
+import { ACCOUNT_CREATED, ACCOUNT_PARTIAL_CREATED } from '../../../common/constants';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
@@ -20,8 +23,9 @@ const baseQueryWith401Handler = async (args, api, extraOptions) => {
   const result = await baseQuery(args, api, extraOptions);
 
   if (result?.error?.status === 401) {
-    // api.dispatch(logout());
-    navigate('LogIn'); // Reset nav to Login screen
+    await removeAsyncStorageData(ACCOUNT_PARTIAL_CREATED)
+    await removeAsyncStorageData(ACCOUNT_CREATED)
+    api.dispatch(setShowScreen('loggedIn'));
   }
 
   return result;

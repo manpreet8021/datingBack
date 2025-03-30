@@ -1,5 +1,5 @@
 export default {
-  friendzy: 'Friendzy',
+  friendzy: 'Yujin',
   onBoardingText1: 'Make friends with the people like you',
   onBoardingText2: 'Find your preferences partners',
   onBoardingText3: 'Let’s meeting new people around you',
@@ -173,4 +173,7 @@ export default {
   keepSwiping: 'Keep swiping',
   accountCreated: 'Account Created',
   accountCreatedDesc: 'Your account has been created successfully. Let\'s find your companion.',
+  exploreEvent: 'Explore Event',
+  yourEvent: 'Your Event',
+  createEvent: 'Let\'s create your Event'
 };

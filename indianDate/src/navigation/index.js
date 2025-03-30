@@ -28,12 +28,10 @@ export default function AppNavigator({navigation}) {
         const { onBoardingValue, accountPartialCreated, accountCreated } = asyncData;
         if (accountCreated) {
           dispatch(setShowScreen('AppScreen'));
-        } else if (accountPartialCreated) {
+        } else if (accountPartialCreated || onBoardingValue) {
           dispatch(setShowScreen('loggedIn'))
-        } else if (onBoardingValue) {
-          dispatch(setShowScreen('onBoarding'))
         } else {
-          dispatch(setShowScreen('loggedIn'))
+          dispatch(setShowScreen('onBoarding'))
         }
       }
     } catch (e) {

@@ -5,39 +5,97 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // custom import
 import FSafeAreaView from '../../../components/common/FSafeAreaView';
-import {colors, styles} from '../../../themes';
+import { colors, styles } from '../../../themes';
 import FText from '../../../components/common/FText';
 import strings from '../../../i18n/strings';
-import {USER_DATA, moderateScale} from '../../../common/constants';
+import { USER_DATA, moderateScale } from '../../../common/constants';
+import Geolocation from "react-native-geolocation-service";
 import {
   FilterIcon,
   LikeIcon,
-  NotificationIcon,
-  StoryAddIcon,
 } from '../../../assets/svg';
 import UserStories from './UserStory/UserStories';
 import images from '../../../assets/images';
 import FastImage from 'react-native-fast-image';
-import {MakeFriendsData, UserDetails} from '../../../api/constant';
+import { MakeFriendsData, UserDetails } from '../../../api/constant';
 import MakeFriends from './MakeFriends';
 import SearchPartnerCard from './SearchPartnerCard';
-import {StackNav} from '../../../navigation/navigationKey';
-import {getAsyncStorageData} from '../../../utils/AsyncStorage';
-import {useIsFocused} from '@react-navigation/native';
+import { StackNav } from '../../../navigation/navigationKey';
+import { getAsyncStorageData } from '../../../utils/AsyncStorage';
+import { useIsFocused } from '@react-navigation/native';
+import ExploreFilter from '../../../components/modal/ExploreFilter';
+import FloatingAddButton from '../../../components/common/FloatingAddButton';
+import HomeHeader from './HomeHeader';
+import { PermissionsAndroid, Platform } from "react-native";
+import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
+import { useSelector } from 'react-redux';
+import { setLocation } from '../../../store/slice/authSlice';
+import { useInsertUserLocationMutation } from '../../../store/slice/api/authApiSlice';
 
-export default function HomeScreen({navigation}) {
+export default function HomeScreen({ navigation }) {
   const [isSelect, setIsSelect] = useState(0);
   const isFocused = useIsFocused();
   const [userImage, setUserImage] = useState('');
+  const SheetRef = useRef(null);
+  const user = useSelector(state => state.auth)
+  const [insertUserLocation, {isLoading}] = useInsertUserLocationMutation()
 
   const userDetails = async () => {
     const data = await getAsyncStorageData(USER_DATA);
     setUserImage(data?.userImage);
   };
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === "android") {
+      const granted = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      );
+      if (granted) return true;
+
+      // Request only if not granted
+      const newGrant = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      );
+      return newGrant === PermissionsAndroid.RESULTS.GRANTED;
+    } else if (Platform.OS === "ios") {
+      const permission = PERMISSIONS.IOS.LOCATION_WHEN_IN_USE; // or LOCATION_ALWAYS
+      const status = await check(permission); // ✅ Check existing status
+
+      if (status === RESULTS.GRANTED) return true; // Already granted
+      if (status === RESULTS.DENIED) return request(permission) === RESULTS.GRANTED;
+
+      if (status === RESULTS.BLOCKED) {
+        console.log("Location permission is blocked. Ask user to enable it in settings.");
+        return false; // Don't request again
+      }
+
+      return request(permission) === RESULTS.GRANTED;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const getUserLocation = async () => {
+      const hasPermission = await requestLocationPermission();
+      if (!hasPermission) return;
+      if (!user.location.latitude) {
+        Geolocation.getCurrentPosition(
+          async (position) => {
+            const body = {latitude: position.coords?.latitude, longitude: position.coords.longitude}
+            setLocation(body)
+            await insertUserLocation(body)
+          },
+          (error) => console.log("Location Error:", error),
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
+        );
+      }
+    };
+    getUserLocation()
+  }, [])
 
   useEffect(() => {
     isFocused && userDetails();
@@ -46,58 +104,59 @@ export default function HomeScreen({navigation}) {
   const categoryData = [
     {
       id: 0,
-      title: strings.makeFriends,
+      title: strings.exploreEvent,
       onPress: () => setIsSelect(0),
     },
     {
       id: 1,
-      title: strings.searchPartners,
+      title: strings.yourEvent,
       onPress: () => setIsSelect(1),
     },
   ];
 
-  const UserProfile = React.memo(() => {
-    return (
-      <View style={localStyle.itemContainer}>
-        <View style={localStyle.itemInnerContainer}>
-          <FastImage
-            source={userImage ? {uri: userImage} : images.UserImage1}
-            style={[
-              localStyle.itemImage,
-              {
-                borderWidth: moderateScale(1),
-              },
-            ]}
-          />
+  // const UserProfile = React.memo(() => {
+  //   return (
+  //     <View style={localStyle.itemContainer}>
+  //       <View style={localStyle.itemInnerContainer}>
+  //         <FastImage
+  //           source={userImage ? {uri: userImage} : images.UserImage1}
+  //           style={[
+  //             localStyle.itemImage,
+  //             {
+  //               borderWidth: moderateScale(1),
+  //             },
+  //           ]}
+  //         />
 
-          <StoryAddIcon
-            name="plus"
-            style={localStyle.addIcon}
-            width={moderateScale(25)}
-            height={moderateScale(25)}
-          />
-        </View>
-        <FText
-          type={'s14'}
-          style={localStyle.itemUsername}
-          color={colors.black}>
-          {'Your Story'}
-        </FText>
-      </View>
-    );
-  });
-  const HeaderStory = () => {
-    return (
-      <UserStories
-        ListHeaderComponent={<UserProfile />}
-        stories={UserDetails}
-      />
-    );
-  };
+  //         <StoryAddIcon
+  //           name="plus"
+  //           style={localStyle.addIcon}
+  //           width={moderateScale(25)}
+  //           height={moderateScale(25)}
+  //         />
+  //       </View>
+  //       <FText
+  //         type={'s14'}
+  //         style={localStyle.itemUsername}
+  //         color={colors.black}>
+  //         {'Your Story'}
+  //       </FText>
+  //     </View>
+  //   );
+  // });
+  // const HeaderStory = () => {
+  //   return (
+  //     <UserStories
+  //       ListHeaderComponent={<UserProfile />}
+  //       stories={UserDetails}
+  //     />
+  //   );
+  // };
 
-  const onPressProfile = () => {
-    navigation.navigate(StackNav.Profile);
-  };
+  // const onPressProfile = () => {
+  //   navigation.navigate(StackNav.Profile);
+  // };
+
   const HeaderCategory = () => {
     return categoryData.map((item, index) => {
       return (
@@ -122,55 +181,37 @@ export default function HomeScreen({navigation}) {
     });
   };
 
-  const MakeFriendsHeader = () => {
-    return (
-      <View>
-        <View style={localStyle.headerContainer}>
-          <FText type={'B28'} color={colors.primary}>
-            {strings.friendzy}
-          </FText>
-          <TouchableOpacity style={localStyle.notificationBg}>
-            <NotificationIcon />
-          </TouchableOpacity>
-        </View>
-        <HeaderStory />
-      </View>
-    );
+  const onPressFilter = () => {
+    SheetRef?.current?.show();
   };
 
-  const SearchPartnerHeader = () => {
-    return (
-      <View style={localStyle.headerContainer}>
-        <TouchableOpacity onPress={onPressProfile}>
-          <Image
-            style={localStyle.userImage}
-            source={userImage ? {uri: userImage} : images.UserImage1}
-          />
-        </TouchableOpacity>
-        <View style={localStyle.likeAndFilterContainer}>
-          <TouchableOpacity
-            style={[
-              localStyle.notificationBg,
-              {
-                ...styles.mr10,
-              },
-            ]}>
-            <LikeIcon />
-          </TouchableOpacity>
-          <TouchableOpacity style={localStyle.notificationBg}>
-            <FilterIcon />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
+  const onPressAddButton = () => {
+    navigation.navigate(StackNav.AddEvent)
+  }
+
+  // const SearchPartnerHeader = () => {
+  //   return (
+  //     <View style={localStyle.headerContainer}>
+  //       <TouchableOpacity onPress={onPressProfile}>
+  //         <Image
+  //           style={localStyle.userImage}
+  //           source={userImage ? {uri: userImage} : images.UserImage1}
+  //         />
+  //       </TouchableOpacity>
+  //       <View style={localStyle.likeAndFilterContainer}>
+
+  //       </View>
+  //     </View>
+  //   );
+  // };
+
   return (
     <FSafeAreaView>
       <ScrollView
         bounces={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={localStyle.mainContainerView}>
-        {isSelect === 0 ? <MakeFriendsHeader /> : <SearchPartnerHeader />}
+        <HomeHeader onPressFilter={onPressFilter} />
         <View style={[localStyle.itemSelectContainer, styles.mt15]}>
           <HeaderCategory />
         </View>
@@ -182,26 +223,16 @@ export default function HomeScreen({navigation}) {
           )}
         </View>
       </ScrollView>
+      <FloatingAddButton onPress={onPressAddButton} />
+      <ExploreFilter SheetRef={SheetRef} />
     </FSafeAreaView>
   );
 }
 
 const localStyle = StyleSheet.create({
-  headerContainer: {
-    ...styles.rowSpaceBetween,
-    ...styles.mv10,
-  },
   mainContainerView: {
     ...styles.ph20,
     // ...styles.flex,
-  },
-  notificationBg: {
-    height: moderateScale(48),
-    width: moderateScale(48),
-    borderRadius: moderateScale(48 / 2),
-    borderColor: colors.lightGray,
-    borderWidth: moderateScale(1),
-    ...styles.center,
   },
   itemContainer: {
     alignItems: 'center',
@@ -249,5 +280,5 @@ const localStyle = StyleSheet.create({
   },
   likeAndFilterContainer: {
     ...styles.rowCenter,
-  },
+  }
 });

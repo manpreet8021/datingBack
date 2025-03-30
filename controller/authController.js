@@ -9,6 +9,7 @@ import { sequelize } from "../config/sequelize.js";
 import { insertInterest } from "../model/userInterestModel.js";
 import { imageUpload, uploadMultipleImages } from "../config/imageUpload.js";
 import { insertImages } from "../model/userImagesModel.js";
+import { insertLocation } from "../model/userLocationModel.js";
 
 const validatePhoneNumber = (phone, countryCode) => {
   const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
@@ -36,6 +37,11 @@ const validateUserUpdateSchema = Joi.object({
   dob: Joi.string().required(),
   gender: Joi.string().required(),
   interest: Joi.array().items(Joi.number().integer().positive().required()).min(5).required()
+})
+
+const insertLocationSchema = Joi.object({
+  latitude: Joi.number().precision(6).required(),
+  longitude: Joi.number().precision(6).required()
 })
 
 const sendOtp = asyncHandler(async (req, res) => {
@@ -181,9 +187,25 @@ const googleLogin = asyncHandler(async (req, res) => {
   res.status(200).json(response);
 })
 
+const insertUserLocation = asyncHandler(async (req, res) => {
+  const {error} = insertLocationSchema.validate(req.body, {abortEarly: false})
+
+  if(error) {
+    res.status(400)
+    throw new Error(error.message)
+  }
+  
+  const user_id = req.user.id
+  const {latitude, longitude} = req.body
+
+  const location = await insertLocation({latitude, longitude, user_id})
+  res.status(201).json()
+})
+
 export {
   sendOtp,
   validateOtp,
   googleLogin,
-  updateUserDetail
+  updateUserDetail,
+  insertUserLocation
 };

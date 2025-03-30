@@ -12,6 +12,7 @@ export const StackNav = {
   MatchesUserDetails: 'MatchesUserDetails',
   MatchDatingScreen: 'MatchDatingScreen',
   StoryView: 'StoryView',
+  AddEvent: 'AddEventScreen'
 };
 
 export const AuthNav = {

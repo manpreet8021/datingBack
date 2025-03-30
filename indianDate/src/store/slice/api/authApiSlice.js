@@ -40,10 +40,17 @@ const userApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 credentials: 'include'
             })
+        }),
+        insertUserLocation: builder.mutation({
+            query: (data) => ({
+                url: 'auth/insertUserLocation',
+                method: 'POST',
+                body: data
+            })
         })
     })
 })
 
-export const { useSendOtpMutation, useValidateOtpMutation, useUpdateUserDetailMutation, useGoogleLoginMutation, useLogoutMutation } = userApiSlice;
+export const { useSendOtpMutation, useValidateOtpMutation, useUpdateUserDetailMutation, useGoogleLoginMutation, useLogoutMutation, useInsertUserLocationMutation } = userApiSlice;
 
 export default userApiSlice

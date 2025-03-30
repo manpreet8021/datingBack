@@ -8,7 +8,11 @@ const initialState = {
     gender: '',
     interest: []
   },
-  showScreen: null
+  showScreen: null,
+  location: {
+    latitude: null,
+    longitude: null
+  }
 };
 
 const authSlice = createSlice({
@@ -19,7 +23,18 @@ const authSlice = createSlice({
       state.userInfo = {...state.userInfo, ...action.payload}
     },
     setShowScreen: (state, action) => {
+      if(action.payload === "loggedIn") {
+        state.userInfo = {
+          name: '',
+          dob: '',
+          gender: '',
+          interest: []
+        }
+      }
       state.showScreen = action.payload
+    },
+    setLocation: (state, action) => {
+      state.location = action.payload
     }
   },
   extraReducers(builder) {
@@ -38,5 +53,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setShowScreen } = authSlice.actions;
+export const { setUser, setShowScreen, setLocation } = authSlice.actions;
 export default authSlice.reducer;

@@ -8,6 +8,7 @@ import LookUpData from "../model/lookUpDataModel.js";
 import UserInterest from "../model/userInterestModel.js";
 import UserImage from "../model/userImagesModel.js";
 import Event from "../model/eventModel.js";
+import UserLocation from "../model/userLocationModel.js";
 
 const connectDb = async () => {
   await sequelize
