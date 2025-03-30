@@ -12,13 +12,21 @@ import FButton from "../../../components/common/FButton";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import { getHeight, moderateScale } from "../../../common/constants";
+import { useSelector } from "react-redux";
+import MapView, { Marker } from 'react-native-maps';
 
 export default function AddEventScreen() {
+  const user = useSelector(state => state.auth)
+  const location = user?.location
+
   const initialState = {
     title: '',
     description: '',
     dateTime: '',
-    category: ''
+    category: '',
+    latitude: '',
+    longitude: '',
+    location: ''
   }
   return (
     <FSafeAreaView>
@@ -32,6 +40,8 @@ export default function AddEventScreen() {
             <Formik initialValues={initialState}>
               {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => {
                 const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+                const [mapViewVisible, setMapViewVisible] = useState(false);
+
                 const hideDatePicker = () => {
                   setDatePickerVisibility(false);
                 };
@@ -39,9 +49,14 @@ export default function AddEventScreen() {
                   console.log(date.toISOString())
                   var dateOfBirth = new Date(date.toISOString()).toLocaleString()
                   setFieldValue('dateTime', dateOfBirth);
-              
                   hideDatePicker();
                 };
+                const handleMapCoordinate = (event) => {
+                  console.log(event)
+                  const { latitude, longitude } = event.nativeEvent.coordinate;
+                  setFieldValue('latitude', latitude)
+                  setFieldValue('longitude', longitude)
+                }
                 return (
                   <View>
                     <FInput
@@ -77,7 +92,7 @@ export default function AddEventScreen() {
                         type={'M16'}
                         color={values.dateTime ? colors.black : colors.grayScale400}
                         style={styles.ml5}>
-                        {values.dateTime ? values.dateTime : strings.birthDate}
+                        {values.dateTime ? values.dateTime : 'Event Date'}
                       </FText>
                       <DateTimePicker
                         isVisible={isDatePickerVisible}
@@ -86,6 +101,38 @@ export default function AddEventScreen() {
                         onConfirm={handleConfirm}
                         minimumDate={new Date()}
                       />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        localStyle.datePikerStyle,
+                        {
+                          borderColor: colors.white,
+                        },
+                      ]}
+                      onPress={() => { setMapViewVisible(true) }}>
+                      <FText
+                        type={'M16'}
+                        color={values.location ? colors.black : colors.grayScale400}
+                        style={styles.ml5}>
+                        {values.location ? values.location : 'Event Location'}
+                      </FText>
+                      {
+                        mapViewVisible && (
+                          <MapView
+                            style={{ height: 1000 }}
+                            initialRegion={{
+                              latitude: location.latitude,
+                              longitude: location.longitude,
+                              latitudeDelta: 0.01,
+                              longitudeDelta: 0.01,
+                            }}
+                            onPress={handleMapCoordinate}
+                          >
+                            <Marker />
+                          </MapView>
+                        )
+                      }
                     </TouchableOpacity>
 
                     <FButton title="Add Event" onPress={handleSubmit} />

@@ -17,7 +17,7 @@ import {colors, styles} from '../../themes';
 import FText from '../../components/common/FText';
 import FInput from '../../components/common/FInput';
 import FButton from '../../components/common/FButton';
-import {ACCOUNT_PARTIAL_CREATED, USER_DATA, getHeight, moderateScale} from '../../common/constants';
+import {ACCOUNT_CREATED, ACCOUNT_PARTIAL_CREATED, USER_DATA, getHeight, moderateScale} from '../../common/constants';
 import {AppleIcon, GoogleIcon} from '../../assets/svg';
 import strings from '../../i18n/strings';
 import {AuthNav} from '../../navigation/navigationKey';
@@ -78,11 +78,16 @@ export default function LogIn({navigation}) {
         }
         const user = await googleLogin(data)
         await EncryptedStorage.setItem('token', user?.data.token)
-        await setAsyncStorageData(ACCOUNT_PARTIAL_CREATED, true)
-        navigation.reset({
-          index: 0,
-          routes: [{ name: AuthNav.AccountName }],
-        });        
+        if(user?.data.updated) {
+          await setAsyncStorageData(ACCOUNT_CREATED, true)
+          dispatch(setShowScreen('AppScreen'))
+        } else {
+          await setAsyncStorageData(ACCOUNT_PARTIAL_CREATED, true)
+          navigation.reset({
+            index: 0,
+            routes: [{ name: AuthNav.AccountName }],
+          }); 
+        }       
       }
     } catch (error) {
       if (isErrorWithCode(error)) {

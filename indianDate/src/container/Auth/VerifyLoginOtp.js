@@ -1,41 +1,46 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 
 import CustomCountDown from '../../components/common/CustomCountDown';
-import {colors, styles} from '../../themes';
-import {ACCOUNT_PARTIAL_CREATED, moderateScale} from '../../common/constants';
+import { colors, styles } from '../../themes';
+import { ACCOUNT_PARTIAL_CREATED, moderateScale } from '../../common/constants';
 import Typography from '../../themes/typography';
-import {AuthNav, StackNav} from '../../navigation/navigationKey';
+import { AuthNav, StackNav } from '../../navigation/navigationKey';
 import FSafeAreaView from '../../components/common/FSafeAreaView';
 import KeyBoardAvoidWrapper from '../../components/common/KeyBoardAvoidWrapper';
 import FHeader from '../../components/common/FHeader';
 import FText from '../../components/common/FText';
 import FButton from '../../components/common/FButton';
 import strings from '../../i18n/strings';
-import {useValidateOtpMutation} from '../../store/slice/api/authApiSlice';
-import {useSelector} from 'react-redux';
+import { useValidateOtpMutation } from '../../store/slice/api/authApiSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { setAsyncStorageData } from '../../utils/AsyncStorage';
+import { setShowScreen } from '../../store/slice/authSlice';
 
-export default function VerifyLoginOtp({navigation}) {
+export default function VerifyLoginOtp({ navigation }) {
   const [otp, setOtp] = useState('');
   const [counterId, setCounterId] = useState('1');
-  const [validateOtp, {isLoading}] = useValidateOtpMutation();
+  const [validateOtp, { isLoading }] = useValidateOtpMutation();
   const auth = useSelector(state => state.auth);
   const phone = auth.userInfo.phone;
+  const dispatch = useDispatch()
 
   const verifyOTP = async () => {
     try {
-      const user = await validateOtp({phone: phone, otp: otp});
-      console.log(user)
+      const user = await validateOtp({ phone: phone, otp: otp });
       await EncryptedStorage.setItem('token', user?.data.token);
-      await setAsyncStorageData(ACCOUNT_PARTIAL_CREATED, true)
-      navigation.reset({
-        index: 0,
-        routes: [{ name: AuthNav.AccountName }],
-      });
-      
+      if (user?.data.updated) {
+        await setAsyncStorageData(ACCOUNT_CREATED, true)
+        dispatch(setShowScreen('AppScreen'))
+      } else {
+        await setAsyncStorageData(ACCOUNT_PARTIAL_CREATED, true)
+        navigation.reset({
+          index: 0,
+          routes: [{ name: AuthNav.AccountName }],
+        });
+      }
     } catch (error) {
       throw new Error(error);
     }
@@ -51,7 +56,7 @@ export default function VerifyLoginOtp({navigation}) {
     setOtp('');
   };
 
-  const onFinishTimer = () => {};
+  const onFinishTimer = () => { };
 
   const onPressVerify = async () => {
     try {
@@ -88,7 +93,7 @@ export default function VerifyLoginOtp({navigation}) {
               <CustomCountDown
                 onFinish={onFinishTimer}
                 keyId={counterId}
-                digitStyle={{backgroundColor: colors.pinkBg}}
+                digitStyle={{ backgroundColor: colors.pinkBg }}
                 digitTxtStyle={localStyle.digitStyle}
               />
             </View>

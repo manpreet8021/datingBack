@@ -36,6 +36,11 @@ User.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    updated: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

@@ -141,7 +141,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   }));
 
   try {
-    await updateUser({ name, dob, gender }, req.user.id, transaction)
+    await updateUser({ name, dob, gender, updated: true }, req.user.id, transaction)
     await insertInterest(interestData, transaction)
     await insertImages(imageValue, transaction)
     await transaction.commit();
@@ -149,6 +149,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     res.status(400)
+    console.log(error)
     throw new Error(error.message)
   }
 })
@@ -179,6 +180,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   const user = await checkOrCreateUser(data)
 
   const response = {
+    updated: user.updated,
     isNewData: user.isNewRecord,
     name: user.name,
     token: generateToken(user.id)

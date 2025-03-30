@@ -32,7 +32,7 @@ import FloatingAddButton from '../../../components/common/FloatingAddButton';
 import HomeHeader from './HomeHeader';
 import { PermissionsAndroid, Platform } from "react-native";
 import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLocation } from '../../../store/slice/authSlice';
 import { useInsertUserLocationMutation } from '../../../store/slice/api/authApiSlice';
 
@@ -43,6 +43,7 @@ export default function HomeScreen({ navigation }) {
   const SheetRef = useRef(null);
   const user = useSelector(state => state.auth)
   const [insertUserLocation, {isLoading}] = useInsertUserLocationMutation()
+  const dispatch = useDispatch()
 
   const userDetails = async () => {
     const data = await getAsyncStorageData(USER_DATA);
@@ -62,14 +63,13 @@ export default function HomeScreen({ navigation }) {
       );
       return newGrant === PermissionsAndroid.RESULTS.GRANTED;
     } else if (Platform.OS === "ios") {
-      const permission = PERMISSIONS.IOS.LOCATION_WHEN_IN_USE; // or LOCATION_ALWAYS
+      const permission = PERMISSIONS.IOS.LOCATION_ALWAYS; // or LOCATION_ALWAYS
       const status = await check(permission); // ✅ Check existing status
 
       if (status === RESULTS.GRANTED) return true; // Already granted
       if (status === RESULTS.DENIED) return request(permission) === RESULTS.GRANTED;
 
       if (status === RESULTS.BLOCKED) {
-        console.log("Location permission is blocked. Ask user to enable it in settings.");
         return false; // Don't request again
       }
 
@@ -80,14 +80,19 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     const getUserLocation = async () => {
+      console.log("here")
       const hasPermission = await requestLocationPermission();
+      console.log(hasPermission)
       if (!hasPermission) return;
+      console.log("here")
       if (!user.location.latitude) {
         Geolocation.getCurrentPosition(
           async (position) => {
+            console.log(position)
             const body = {latitude: position.coords?.latitude, longitude: position.coords.longitude}
-            setLocation(body)
-            await insertUserLocation(body)
+            dispatch(setLocation(body))
+            const response = await insertUserLocation(body)
+            console.log(response)
           },
           (error) => console.log("Location Error:", error),
           { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }

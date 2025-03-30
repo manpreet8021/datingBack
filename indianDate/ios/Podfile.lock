@@ -63,6 +63,8 @@ PODS:
     - PromisesObjC (~> 2.4)
   - fmt (11.0.2)
   - glog (0.3.5)
+  - Google-Maps-iOS-Utils (5.0.0):
+    - GoogleMaps (~> 8.0)
   - GoogleAppMeasurement (11.8.0):
     - GoogleAppMeasurement/AdIdSupport (= 11.8.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
@@ -83,6 +85,12 @@ PODS:
     - GoogleUtilities/Network (~> 8.0)
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
     - nanopb (~> 3.30910.0)
+  - GoogleMaps (8.4.0):
+    - GoogleMaps/Maps (= 8.4.0)
+  - GoogleMaps/Base (8.4.0)
+  - GoogleMaps/Maps (8.4.0):
+    - GoogleMaps/Base
+  - GooglePlaces (9.4.1)
   - GoogleSignIn (7.1.0):
     - AppAuth (< 2.0, >= 1.7.3)
     - GTMAppAuth (< 5.0, >= 4.1.1)
@@ -1358,6 +1366,12 @@ PODS:
     - React-Core
   - react-native-geolocation-service (5.3.1):
     - React
+  - react-native-google-maps (1.20.1):
+    - Google-Maps-iOS-Utils (= 5.0.0)
+    - GoogleMaps (= 8.4.0)
+    - React-Core
+  - react-native-maps (1.20.1):
+    - React-Core
   - react-native-safe-area-context (5.2.0):
     - DoubleConversion
     - glog
@@ -2085,6 +2099,8 @@ DEPENDENCIES:
   - FirebaseCoreExtension
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - GoogleMaps
+  - GooglePlaces
   - GoogleUtilities
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -2120,6 +2136,8 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-encrypted-storage (from `../node_modules/react-native-encrypted-storage`)
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
+  - react-native-google-maps (from `../node_modules/react-native-maps`)
+  - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-video (from `../node_modules/react-native-video`)
@@ -2182,7 +2200,10 @@ SPEC REPOS:
     - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseInstallations
+    - Google-Maps-iOS-Utils
     - GoogleAppMeasurement
+    - GoogleMaps
+    - GooglePlaces
     - GoogleSignIn
     - GoogleUtilities
     - GTMAppAuth
@@ -2276,6 +2297,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-encrypted-storage"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
+  react-native-google-maps:
+    :path: "../node_modules/react-native-maps"
+  react-native-maps:
+    :path: "../node_modules/react-native-maps"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-splash-screen:
@@ -2391,7 +2416,10 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 6c963bd2a86aca0481eef4f48f5a4df783ae5917
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: eb93e2f488219332457c3c4eafd2738ddc7e80b8
+  Google-Maps-iOS-Utils: 66d6de12be1ce6d3742a54661e7a79cb317a9321
   GoogleAppMeasurement: fc0817122bd4d4189164f85374e06773b9561896
+  GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
+  GooglePlaces: 8afca6c4e946472e91298589d1640d614b51749a
   GoogleSignIn: d4281ab6cf21542b1cfaff85c191f230b399d2db
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
@@ -2431,6 +2459,8 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: c5c04ce22b6437388c02d277cdfc7cffc3103da9
   react-native-encrypted-storage: 569d114e329b1c2c2d9f8c84bcdbe4478dda2258
   react-native-geolocation-service: 32b2c2a3b91e70ce2a8d0c684801aaeb0a07e0ec
+  react-native-google-maps: c4f5c5b2dda17e7cb2cb2b37a81f140b039b3e7e
+  react-native-maps: 9febd31278b35cd21e4fad2cf6fa708993be5dab
   react-native-safe-area-context: 02e0f487c16ccf1acc8a666bed2318ceeb5dc14c
   react-native-splash-screen: 95994222cc95c236bd3cdc59fe45ed5f27969594
   react-native-video: 16b5c395d05f8af23e16bfe3dc0794a5514c882f
@@ -2485,6 +2515,6 @@ SPEC CHECKSUMS:
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 28b8cda182ee3092ff80203da66dcb3ffc8cf401
 
-PODFILE CHECKSUM: f438d82dca3289796ab74b622720cfcb5e8f6c9d
+PODFILE CHECKSUM: 4a6952d15bf2ba4c325172a83c8b2c5bdbb4fa91
 
 COCOAPODS: 1.16.2
