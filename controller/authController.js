@@ -111,7 +111,8 @@ const validateOtp = asyncHandler(async (req, res) => {
   const response = {
     isNewData: user.isNewRecord,
     name: user.name,
-    token: generateToken(user.id)
+    token: generateToken(user.id),
+    updated: user.updated
   }
 
   res.status(200).json(response);
@@ -149,7 +150,6 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     res.status(400)
-    console.log(error)
     throw new Error(error.message)
   }
 })
@@ -185,7 +185,6 @@ const googleLogin = asyncHandler(async (req, res) => {
     name: user.name,
     token: generateToken(user.id)
   }
-
   res.status(200).json(response);
 })
 

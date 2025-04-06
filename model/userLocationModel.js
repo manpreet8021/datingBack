@@ -33,8 +33,8 @@ UserLocation.belongsTo(User, {
 
 
 export const insertLocation = async (data) => {
-  const [user] = await UserLocation.create(data);
-  return user
+  const userLocation = await UserLocation.create(data);
+  return userLocation
 }
 
 export default UserLocation

@@ -44,6 +44,7 @@ export default function HomeScreen({ navigation }) {
   const user = useSelector(state => state.auth)
   const [insertUserLocation, {isLoading}] = useInsertUserLocationMutation()
   const dispatch = useDispatch()
+  const [hasPermission, setHasPermission] = useState(false)
 
   const userDetails = async () => {
     const data = await getAsyncStorageData(USER_DATA);
@@ -67,7 +68,7 @@ export default function HomeScreen({ navigation }) {
       const status = await check(permission); // ✅ Check existing status
 
       if (status === RESULTS.GRANTED) return true; // Already granted
-      if (status === RESULTS.DENIED) return request(permission) === RESULTS.GRANTED;
+      if (status === RESULTS.DENIED) return await request(permission) === RESULTS.GRANTED;
 
       if (status === RESULTS.BLOCKED) {
         return false; // Don't request again
@@ -79,16 +80,22 @@ export default function HomeScreen({ navigation }) {
   };
 
   useEffect(() => {
-    const getUserLocation = async () => {
+    const getUserPermission = async () => {
       console.log("here")
-      const hasPermission = await requestLocationPermission();
-      console.log(hasPermission)
+      setHasPermission(await requestLocationPermission())
       if (!hasPermission) return;
-      console.log("here")
-      if (!user.location.latitude) {
+    };
+    getUserPermission()
+  }, [])
+
+  useEffect(()=> {
+    console.log(hasPermission)
+    console.log(user.location)
+    if(hasPermission && !user.location.latitude) {
+      const getUserLocation = async() => {
         Geolocation.getCurrentPosition(
           async (position) => {
-            console.log(position)
+            console.log("here inside")
             const body = {latitude: position.coords?.latitude, longitude: position.coords.longitude}
             dispatch(setLocation(body))
             const response = await insertUserLocation(body)
@@ -98,9 +105,9 @@ export default function HomeScreen({ navigation }) {
           { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
         );
       }
-    };
-    getUserLocation()
-  }, [])
+      getUserLocation()
+    }
+  },[hasPermission])
 
   useEffect(() => {
     isFocused && userDetails();

@@ -13,7 +13,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import { getHeight, moderateScale } from "../../../common/constants";
 import { useSelector } from "react-redux";
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 
 export default function AddEventScreen() {
   const user = useSelector(state => state.auth)
@@ -120,7 +120,8 @@ export default function AddEventScreen() {
                       {
                         mapViewVisible && (
                           <MapView
-                            style={{ height: 1000 }}
+                          provider={PROVIDER_GOOGLE}
+                            style={{ height: 10000, position: 'static' }}
                             initialRegion={{
                               latitude: location.latitude,
                               longitude: location.longitude,
@@ -129,15 +130,12 @@ export default function AddEventScreen() {
                             }}
                             onPress={handleMapCoordinate}
                           >
-                            <Marker />
                           </MapView>
                         )
                       }
                     </TouchableOpacity>
-
                     <FButton title="Add Event" onPress={handleSubmit} />
                   </View>
-
                 )
               }}
             </Formik>
