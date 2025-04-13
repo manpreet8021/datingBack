@@ -13,10 +13,11 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import { getHeight, moderateScale } from "../../../common/constants";
 import { useSelector } from "react-redux";
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import MapView from "../../../components/Home/MapView";
 
 export default function AddEventScreen() {
   const user = useSelector(state => state.auth)
+  const [mapViewVisible, setMapViewVisible] = useState(false);
   const location = user?.location
 
   const initialState = {
@@ -30,118 +31,111 @@ export default function AddEventScreen() {
   }
   return (
     <FSafeAreaView>
-      <FHeader />
-      <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
-        <View style={localStyle.mainContainer}>
-          <View>
-            <FText type={'B24'} color={colors.primary} align={'center'}>
-              {strings.createEvent}
-            </FText>
-            <Formik initialValues={initialState}>
-              {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => {
-                const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-                const [mapViewVisible, setMapViewVisible] = useState(false);
+      {
+        mapViewVisible ? (
+          <MapView location={location}/>
+        ) : (
+          <>
+            <FHeader />
+            <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
+              <View style={localStyle.mainContainer}>
+                <View>
+                  <FText type={'B24'} color={colors.primary} align={'center'}>
+                    {strings.createEvent}
+                  </FText>
 
-                const hideDatePicker = () => {
-                  setDatePickerVisibility(false);
-                };
-                const handleConfirm = date => {
-                  console.log(date.toISOString())
-                  var dateOfBirth = new Date(date.toISOString()).toLocaleString()
-                  setFieldValue('dateTime', dateOfBirth);
-                  hideDatePicker();
-                };
-                const handleMapCoordinate = (event) => {
-                  console.log(event)
-                  const { latitude, longitude } = event.nativeEvent.coordinate;
-                  setFieldValue('latitude', latitude)
-                  setFieldValue('longitude', longitude)
-                }
-                return (
-                  <View>
-                    <FInput
-                      keyBoardType={'default'}
-                      autoCapitalize={'none'}
-                      toGetTextFieldValue={handleChange('title')}
-                      onBlur={handleBlur('title')}
-                      placeholder="Title"
-                      _value={values.title}
-                      _errorText={touched.title && errors.title && errors.title}
-                    />
+                  <Formik initialValues={initialState}>
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => {
+                      const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-                    <FInput
-                      keyBoardType={'default'}
-                      autoCapitalize={'none'}
-                      toGetTextFieldValue={handleChange('description')}
-                      onBlur={handleBlur('description')}
-                      placeholder="Description"
-                      multiline={true}
-                      _value={values.description}
-                      _errorText={touched.description && errors.description && errors.description}
-                    />
-
-                    <TouchableOpacity
-                      style={[
-                        localStyle.datePikerStyle,
-                        {
-                          borderColor: colors.white,
-                        },
-                      ]}
-                      onPress={() => { setDatePickerVisibility(true) }}>
-                      <FText
-                        type={'M16'}
-                        color={values.dateTime ? colors.black : colors.grayScale400}
-                        style={styles.ml5}>
-                        {values.dateTime ? values.dateTime : 'Event Date'}
-                      </FText>
-                      <DateTimePicker
-                        isVisible={isDatePickerVisible}
-                        mode="datetime"
-                        onCancel={hideDatePicker}
-                        onConfirm={handleConfirm}
-                        minimumDate={new Date()}
-                      />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={[
-                        localStyle.datePikerStyle,
-                        {
-                          borderColor: colors.white,
-                        },
-                      ]}
-                      onPress={() => { setMapViewVisible(true) }}>
-                      <FText
-                        type={'M16'}
-                        color={values.location ? colors.black : colors.grayScale400}
-                        style={styles.ml5}>
-                        {values.location ? values.location : 'Event Location'}
-                      </FText>
-                      {
-                        mapViewVisible && (
-                          <MapView
-                          provider={PROVIDER_GOOGLE}
-                            style={{ height: 10000, position: 'static' }}
-                            initialRegion={{
-                              latitude: location.latitude,
-                              longitude: location.longitude,
-                              latitudeDelta: 0.01,
-                              longitudeDelta: 0.01,
-                            }}
-                            onPress={handleMapCoordinate}
-                          >
-                          </MapView>
-                        )
+                      const hideDatePicker = () => {
+                        setDatePickerVisibility(false);
+                      };
+                      const handleConfirm = date => {
+                        console.log(date.toISOString())
+                        var dateOfBirth = new Date(date.toISOString()).toLocaleString()
+                        setFieldValue('dateTime', dateOfBirth);
+                        hideDatePicker();
+                      };
+                      const handleMapCoordinate = (event) => {
+                        console.log(event)
+                        const { latitude, longitude } = event.nativeEvent.coordinate;
+                        setFieldValue('latitude', latitude)
+                        setFieldValue('longitude', longitude)
                       }
-                    </TouchableOpacity>
-                    <FButton title="Add Event" onPress={handleSubmit} />
-                  </View>
-                )
-              }}
-            </Formik>
-          </View>
-        </View>
-      </KeyBoardAvoidWrapper>
+                      return (
+                        <View>
+                          <FInput
+                            keyBoardType={'default'}
+                            autoCapitalize={'none'}
+                            toGetTextFieldValue={handleChange('title')}
+                            onBlur={handleBlur('title')}
+                            placeholder="Title"
+                            _value={values.title}
+                            _errorText={touched.title && errors.title && errors.title}
+                          />
+
+                          <FInput
+                            keyBoardType={'default'}
+                            autoCapitalize={'none'}
+                            toGetTextFieldValue={handleChange('description')}
+                            onBlur={handleBlur('description')}
+                            placeholder="Description"
+                            multiline={true}
+                            _value={values.description}
+                            _errorText={touched.description && errors.description && errors.description}
+                          />
+
+                          <TouchableOpacity
+                            style={[
+                              localStyle.datePikerStyle,
+                              {
+                                borderColor: colors.white,
+                              },
+                            ]}
+                            onPress={() => { setDatePickerVisibility(true) }}>
+                            <FText
+                              type={'M16'}
+                              color={values.dateTime ? colors.black : colors.grayScale400}
+                              style={styles.ml5}>
+                              {values.dateTime ? values.dateTime : 'Event Date'}
+                            </FText>
+                            <DateTimePicker
+                              isVisible={isDatePickerVisible}
+                              mode="datetime"
+                              onCancel={hideDatePicker}
+                              onConfirm={handleConfirm}
+                              minimumDate={new Date()}
+                            />
+                          </TouchableOpacity>
+
+                          <TouchableOpacity
+                            style={[
+                              localStyle.datePikerStyle,
+                              {
+                                borderColor: colors.white,
+                              },
+                            ]}
+                            onPress={() => { setMapViewVisible(true) }}>
+                            <FText
+                              type={'M16'}
+                              color={values.location ? colors.black : colors.grayScale400}
+                              style={styles.ml5}>
+                              {values.location ? values.location : 'Event Location'}
+                            </FText>
+
+                          </TouchableOpacity>
+                          <FButton title="Add Event" onPress={handleSubmit} />
+                        </View>
+                      )
+                    }}
+                  </Formik>
+                </View>
+              </View>
+            </KeyBoardAvoidWrapper>
+          </>
+        )
+      }
     </FSafeAreaView>
   )
 }
