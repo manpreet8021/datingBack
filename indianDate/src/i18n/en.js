@@ -175,5 +175,6 @@ export default {
   accountCreatedDesc: 'Your account has been created successfully. Let\'s find your companion.',
   exploreEvent: 'Explore Event',
   yourEvent: 'Your Event',
-  createEvent: 'Let\'s create your Event'
+  createEvent: 'Let\'s create your Event',
+  done: 'Done'
 };

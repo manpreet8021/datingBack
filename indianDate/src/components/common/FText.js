@@ -4,7 +4,7 @@ import Typography from '../../themes/typography';
 import {colors} from '../../themes';
 
 //Text Component
-const FText = ({type, style, align, color, children, ...props}) => {
+const FText = ({_errorText, type, style, align, color, children, ...props}) => {
   const fontWeights = () => {
     switch (type.charAt(0).toUpperCase()) {
       case 'R':

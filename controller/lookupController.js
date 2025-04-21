@@ -59,7 +59,7 @@ const addLookUpValue = asyncHandler(async (req, res) => {
 const getLookUpValues = asyncHandler(async (req, res) => {
   const {data} = req.params
 
-  const orderby = data.toLowerCase() === 'interest' ? 'name' : 'priority'
+  const orderby = data.toLowerCase() === 'gender' ? 'priority' : 'name'
 
   const values = await getLookUpValueUsingData({name: data.toLowerCase(), orderby: orderby}) 
 

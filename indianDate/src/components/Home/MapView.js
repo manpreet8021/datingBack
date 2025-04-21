@@ -1,16 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { View, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { useDispatch, useSelector } from 'react-redux';
 import { setEventLocation } from '../../store/slice/eventSlice';
+import { colors } from '../../themes';
+import strings from '../../i18n/strings';
+import FButton from '../common/FButton';
 
-const MapViewComponent = () => {
-	const dispatch = useDispatch()
+const MapViewComponent = ({ location, setMapViewVisible, setFieldValue, latitude, longitude }) => {
 	const mapRef = useRef(null);
-	const [markerPosition, setMarkerPosition] = useState(null);
-	const auth = useSelector(state => state.auth)
-	const event = useSelector(state => state.event)
+	const [markerPosition, setMarkerPosition] = useState({
+		latitude: latitude,
+		longitude: longitude
+	});
 
 	const handlePlaceSelect = (data, details) => {
 		const { lat, lng } = details.geometry.location;
@@ -18,9 +20,8 @@ const MapViewComponent = () => {
 			latitude: lat,
 			longitude: lng,
 		};
-
-		dispatch(setEventLocation(coords))
-
+		setFieldValue('latitude', coords.latitude)
+		setFieldValue('longitude', coords.longitude)
 		setMarkerPosition(coords);
 		mapRef.current.animateToRegion({
 			...coords,
@@ -35,12 +36,12 @@ const MapViewComponent = () => {
 				placeholder="Search for a place"
 				fetchDetails={true}
 				onPress={handlePlaceSelect}
-				debounce={500}
+				debounce={1000}
 				onFail={(error) => {
 					console.error("Google Places Autocomplete Error:", error);
 				}}
 				query={{
-					key: 'AIzaSyAnSYnvCWqTeFhXEO3RXNZgatf9Ij4eFxM',
+					key: '',
 					language: 'en',
 				}}
 				styles={{
@@ -55,16 +56,34 @@ const MapViewComponent = () => {
 				ref={mapRef}
 				style={styles.map}
 				initialRegion={{
-					latitude: event.AddEventLocation.latitude || auth.location.latitude,
-					longitude: event.AddEventLocation.longitude || auth.location.longitude,
+					latitude: location.latitude,
+					longitude: location.longitude,
 					latitudeDelta: 0.05,
 					longitudeDelta: 0.05,
 				}}
+				provider={PROVIDER_GOOGLE}
+				onPress={(e) => {
+					const newLocation = {
+						latitude: e.nativeEvent?.coordinate.latitude,
+						longitude: e.nativeEvent?.coordinate.longitude,
+					}
+					setFieldValue('latitude',newLocation.latitude)
+					setFieldValue('longitude',newLocation.longitude)
+					setMarkerPosition(newLocation)
+				}}
 			>
-				{markerPosition && (
-					<Marker coordinate={markerPosition} />
-				)}
+				<Marker coordinate={markerPosition} />
 			</MapView>
+			<View style={styles.doneButton}>
+				<FButton
+					title={strings.done}
+					color={colors.white}
+					containerStyle={styles.doneButtonText}
+					onPress={() => {
+						setMapViewVisible(false)
+					}}
+				/>
+			</View>
 		</View>
 	);
 };
@@ -93,8 +112,16 @@ const styles = StyleSheet.create({
 		marginHorizontal: 10,
 	},
 	map: {
-		width: Dimensions.get('window').width,
+		width: '100%',
 		height: '100%',
+	},
+	doneButton: {
+		position: 'absolute',
+		bottom: 60,
+		alignSelf: 'flex-end',
+	},
+	doneButtonText: {
+		width: '80%',
 	},
 });
 

@@ -1,7 +1,6 @@
-import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import FText from "../../../components/common/FText";
 import FSafeAreaView from "../../../components/common/FSafeAreaView";
-import { ScrollView } from "react-native-actions-sheet";
 import FHeader from "../../../components/common/FHeader";
 import KeyBoardAvoidWrapper from "../../../components/common/KeyBoardAvoidWrapper";
 import FInput from "../../../components/common/FInput";
@@ -14,56 +13,77 @@ import { useState } from "react";
 import { getHeight, moderateScale } from "../../../common/constants";
 import { useSelector } from "react-redux";
 import MapView from "../../../components/Home/MapView";
+import * as Yup from 'yup';
+import Typography from "../../../themes/typography";
+import { Dropdown } from 'react-native-element-dropdown';
+import { useGetLookupValueQuery } from "../../../store/slice/api/lookupApiSlice";
 
 export default function AddEventScreen() {
   const user = useSelector(state => state.auth)
-  const [mapViewVisible, setMapViewVisible] = useState(false);
+  const { isLoading, data: categories } = useGetLookupValueQuery('event')
   const location = user?.location
+
+  const [mapViewVisible, setMapViewVisible] = useState(false);
+
+  const handleSubmit = async (e) => {
+    console.log(e)
+  }
+
+  const eventSchema = Yup.object().shape({
+    title: Yup.string()
+      .min(2, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Title is required'),
+    description: Yup.string()
+      .min(2, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Description is required'),
+    dateTime: Yup.string().required('Date and time for the event is required'),
+    category: Yup.string().required('Please select a category'),
+    latitude: Yup.number().required('Location is required'),
+    longitude: Yup.number().required('Location is required')
+  });
 
   const initialState = {
     title: '',
     description: '',
     dateTime: '',
     category: '',
-    latitude: '',
-    longitude: '',
-    location: ''
+    latitude: null,
+    longitude: null
   }
   return (
     <FSafeAreaView>
-      {
-        mapViewVisible ? (
-          <MapView location={location}/>
-        ) : (
-          <>
-            <FHeader />
-            <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
-              <View style={localStyle.mainContainer}>
-                <View>
-                  <FText type={'B24'} color={colors.primary} align={'center'}>
-                    {strings.createEvent}
-                  </FText>
+      <FHeader />
+      <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
+        <View style={localStyle.mainContainer}>
+          <View>
+            <FText type={'B24'} color={colors.primary} align={'center'}>
+              {strings.createEvent}
+            </FText>
 
-                  <Formik initialValues={initialState}>
-                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => {
-                      const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+            <Formik initialValues={initialState}
+              onSubmit={handleSubmit}
+              validationSchema={eventSchema}>
+              {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => {
+                const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-                      const hideDatePicker = () => {
-                        setDatePickerVisibility(false);
-                      };
-                      const handleConfirm = date => {
-                        console.log(date.toISOString())
-                        var dateOfBirth = new Date(date.toISOString()).toLocaleString()
-                        setFieldValue('dateTime', dateOfBirth);
-                        hideDatePicker();
-                      };
-                      const handleMapCoordinate = (event) => {
-                        console.log(event)
-                        const { latitude, longitude } = event.nativeEvent.coordinate;
-                        setFieldValue('latitude', latitude)
-                        setFieldValue('longitude', longitude)
-                      }
-                      return (
+                const hideDatePicker = () => {
+                  setDatePickerVisibility(false);
+                };
+
+                const handleConfirm = date => {
+                  var dateOfBirth = new Date(date.toISOString()).toLocaleString()
+                  setFieldValue('dateTime', dateOfBirth);
+                  hideDatePicker();
+                };
+
+                return (
+                  <View style={localStyle.map}>
+                    {
+                      mapViewVisible ? (
+                        <MapView location={location} setFieldValue={setFieldValue} setMapViewVisible={setMapViewVisible} latitude={values.latitude} longitude={values.longitude} />
+                      ) : (
                         <View>
                           <FInput
                             keyBoardType={'default'}
@@ -97,9 +117,11 @@ export default function AddEventScreen() {
                             <FText
                               type={'M16'}
                               color={values.dateTime ? colors.black : colors.grayScale400}
-                              style={styles.ml5}>
+                              style={styles.ml5}
+                              _errorText={touched.dateTime && errors.dateTime && errors.dateTime}>
                               {values.dateTime ? values.dateTime : 'Event Date'}
                             </FText>
+
                             <DateTimePicker
                               isVisible={isDatePickerVisible}
                               mode="datetime"
@@ -108,6 +130,35 @@ export default function AddEventScreen() {
                               minimumDate={new Date()}
                             />
                           </TouchableOpacity>
+
+                          <FText
+                            style={{
+                              ...localStyle.errorText,
+                              color: colors.alertColor,
+                            }}>
+                            {touched.dateTime && errors.dateTime && errors.dateTime}
+                          </FText>
+
+                          <Dropdown
+                            style={[
+                              localStyle.datePikerStyle,
+                              {
+                                borderColor: colors.white,
+                              },
+                            ]}
+                            data={categories ? categories : []}
+                            labelField="name"
+                            valueField="id"
+                            onChange={(e) => { console.log(e); setFieldValue('category', e.id) }}
+                          />
+
+                          <FText
+                            style={{
+                              ...localStyle.errorText,
+                              color: colors.alertColor,
+                            }}>
+                            {touched.category && errors.category && errors.category}
+                          </FText>
 
                           <TouchableOpacity
                             style={[
@@ -119,23 +170,31 @@ export default function AddEventScreen() {
                             onPress={() => { setMapViewVisible(true) }}>
                             <FText
                               type={'M16'}
-                              color={values.location ? colors.black : colors.grayScale400}
+                              color={values.latitude ? colors.black : colors.grayScale400}
                               style={styles.ml5}>
-                              {values.location ? values.location : 'Event Location'}
+                              {values.latitude ? 'Location Added' : 'Event Location'}
                             </FText>
 
                           </TouchableOpacity>
+                          <FText
+                            style={{
+                              ...localStyle.errorText,
+                              color: colors.alertColor,
+                            }}>
+                            {touched.latitude && errors.latitude && errors.latitude}
+                          </FText>
                           <FButton title="Add Event" onPress={handleSubmit} />
                         </View>
                       )
-                    }}
-                  </Formik>
-                </View>
-              </View>
-            </KeyBoardAvoidWrapper>
-          </>
-        )
-      }
+                    }
+                  </View>
+                )
+              }}
+            </Formik>
+          </View>
+
+        </View>
+      </KeyBoardAvoidWrapper>
     </FSafeAreaView>
   )
 }
@@ -156,5 +215,14 @@ const localStyle = StyleSheet.create({
     ...styles.ph10,
     ...styles.pv15,
     borderWidth: moderateScale(1),
+  },
+  errorText: {
+    ...Typography.fontSizes.f12,
+    ...styles.mt5,
+    ...styles.ml5,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
   },
 })
