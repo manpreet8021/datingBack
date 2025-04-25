@@ -4,13 +4,15 @@ import { imageUpload } from "../config/imageUpload.js";
 import { addEvent, updateEvent, getEventByCondition, getEventById } from "../model/eventModel.js";
 import { checkIfMatchExist, insertMatch } from "../model/matchModel.js";
 import { checkIfEventMatchExist, insertEventMatch } from "../model/eventMatchModel.js";
+import { sequelize } from "../config/sequelize.js";
+import { addEventDate } from "../model/eventDateModel.js";
 
 const addEventSchema = Joi.object({
   title: Joi.string().required(),
   description: Joi.string().required(),
   dateTime: Joi.string().required(),
-  latitude: Joi.string().required(),
-  longitude: Joi.string().required(),
+  latitude: Joi.number().required(),
+  longitude: Joi.number().required(),
   category: Joi.number().integer().required(),
 });
 
@@ -19,8 +21,8 @@ const updateEventSchema = Joi.object({
   title: Joi.string().required(),
   description: Joi.string().required(),
   dateTime: Joi.string().required(),
-  latitude: Joi.string().required(),
-  longitude: Joi.string().required(),
+  latitude: Joi.number().required(),
+  longitude: Joi.number().required(),
   category: Joi.number().integer().required(),
 });
 
@@ -39,13 +41,16 @@ const insertEventDetail = asyncHandler(async (req, res) => {
   }
 
   const { title, description, dateTime, latitude, longitude, category } = req.body;
-  const imagesInfo = await imageUpload(req.files.image, 'event', req.user.id, 'thumbnail')
+  const transaction = await sequelize.transaction();
 
-  const EventInserted = await addEvent({ title, description, dateTime, latitude, longitude, category, userId: req.user.id, image_id: imagesInfo.image_id, image_url: imagesInfo.image_url, public_id: imagesInfo.public_id});
-
-  if (EventInserted) {
+  const EventInserted = await addEvent({ title, description, latitude, longitude, category, userId: req.user.id}, transaction);
+  const event_id = EventInserted.dataValues.id
+  const eventDateId = await addEventDate({date: dateTime,eventId: event_id}, transaction)
+  if (eventDateId) {
+    await transaction.commit();
     res.status(201).json();
   } else {
+    await transaction.rollback();
     res.status(400);
     throw new Error("Event creation failed");
   }

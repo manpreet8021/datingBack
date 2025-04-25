@@ -20,10 +20,6 @@ Event.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    dateTime: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
     latitude: {
       type: DataTypes.STRING,
       allowNull: false
@@ -42,15 +38,15 @@ Event.init(
     },
     image_id: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     image_url: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     public_id: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     active: {
       type: DataTypes.BOOLEAN,
@@ -74,9 +70,8 @@ Event.belongsTo(LookUpValue, { foreignKey: 'category', as: 'categoryInfo' });
 
 export default Event
 
-export const saveBulkEvent = async (values) => await Event.bulkCreate(values)
 export const getEvent = async () => await Event.findAll()
 export const getEventById = async (id) => await Event.findByPk(id)
 export const getEventByCondition = async(condition) => await Event.findOne({ where: condition })
-export const addEvent = async (data) => await Event.create(data)
-export const updateEvent = async (data, id) => await Event.update(data, {where: {id: id}})
+export const addEvent = async (data, transaction) => await Event.create(data, {transaction})
+export const updateEvent = async (data, id, transaction) => await Event.update(data, {where: {id: id}, transaction})

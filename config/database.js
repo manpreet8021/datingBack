@@ -9,6 +9,7 @@ import UserInterest from "../model/userInterestModel.js";
 import UserImage from "../model/userImagesModel.js";
 import Event from "../model/eventModel.js";
 import UserLocation from "../model/userLocationModel.js";
+import EventDate from "../model/eventDateModel.js";
 
 const connectDb = async () => {
   await sequelize
@@ -19,7 +20,7 @@ const connectDb = async () => {
     );
 
   await sequelize
-    .sync()
+    .sync({force: true})
     .then(() => console.log("Database & tables created!"))
     .catch((error) => console.error("Error syncing database:", error));
 };

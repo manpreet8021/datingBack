@@ -6,8 +6,8 @@ import { upload } from '../middleware/multerMiddleware.js';
 const router = express.Router()
 
 router.route('/').get(getEvents)
-router.route('/').post(protect, upload.single('thumbnail'), insertEventDetail)
-router.route('/').put(protect, upload.single('thumbnail'), updateEventDetail)
+router.route('/').post(protect, insertEventDetail)
+router.route('/').put(protect, updateEventDetail)
 router.route('/like/:eventid').put(protect, likeEvent)
 
 export default router

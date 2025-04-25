@@ -17,27 +17,26 @@ import * as Yup from 'yup';
 import Typography from "../../../themes/typography";
 import { Dropdown } from 'react-native-element-dropdown';
 import { useGetLookupValueQuery } from "../../../store/slice/api/lookupApiSlice";
+import { useAddEventMutation } from "../../../store/slice/api/eventApiSlice";
 
 export default function AddEventScreen() {
   const user = useSelector(state => state.auth)
   const { isLoading, data: categories } = useGetLookupValueQuery('event')
+  const [addEvent, {isLoading: addEventLoader}] = useAddEventMutation()
   const location = user?.location
 
   const [mapViewVisible, setMapViewVisible] = useState(false);
 
   const handleSubmit = async (e) => {
-    console.log(e)
+    const response = await addEvent(e)
+    console.log(response)
   }
 
   const eventSchema = Yup.object().shape({
     title: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Title is required'),
+      .max(25, 'Too Long!'),
     description: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Description is required'),
+      .max(50, 'Too Long!'),
     dateTime: Yup.string().required('Date and time for the event is required'),
     category: Yup.string().required('Please select a category'),
     latitude: Yup.number().required('Location is required'),
@@ -124,7 +123,7 @@ export default function AddEventScreen() {
 
                             <DateTimePicker
                               isVisible={isDatePickerVisible}
-                              mode="datetime"
+                              mode="date"
                               onCancel={hideDatePicker}
                               onConfirm={handleConfirm}
                               minimumDate={new Date()}
@@ -149,7 +148,8 @@ export default function AddEventScreen() {
                             data={categories ? categories : []}
                             labelField="name"
                             valueField="id"
-                            onChange={(e) => { console.log(e); setFieldValue('category', e.id) }}
+                            onChange={(e) => { setFieldValue('category', e.id) }}
+                            value={values.category}
                           />
 
                           <FText
