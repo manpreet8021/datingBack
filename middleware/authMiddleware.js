@@ -4,7 +4,6 @@ import { getUser } from "../model/userModel.js";
 
 const protect = asyncHandler(async(req, res, next) => {
     let token = '';
-    console.log(req)
     token = verifyToken(req.headers.authorization)
     if(token) {
         const user = await getUser(token.id);

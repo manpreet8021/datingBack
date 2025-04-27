@@ -1,9 +1,11 @@
-const {createSlice} = require('@reduxjs/toolkit');
+import eventApiSlice from './api/eventApiSlice';
+
+const { createSlice } = require('@reduxjs/toolkit');
 const initialState = {
   events: [],
   AddEventLocation: {
-		latitude: null,
-		longitude: null
+    latitude: null,
+    longitude: null
   }
 };
 
@@ -12,12 +14,17 @@ const eventSlice = createSlice({
   initialState,
   reducers: {
     setEventLocation: (state, action) => {
-			state.AddEventLocation = action.payload
-		}
+      state.AddEventLocation = action.payload
+    }
   },
   extraReducers(builder) {
-    
-  },
+    builder.addMatcher(
+      eventApiSlice.endpoints.fetchEvents.matchFulfilled,
+      (state, { payload }) => {
+        state.events = [...state.events, ...payload];
+      }
+    )
+  }
 });
 
 export const { setEventLocation } = eventSlice.actions;

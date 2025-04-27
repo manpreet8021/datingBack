@@ -5,7 +5,7 @@ import { upload } from '../middleware/multerMiddleware.js';
 
 const router = express.Router()
 
-router.route('/').get(getEvents)
+router.route('/').get(protect, getEvents)
 router.route('/').post(protect, insertEventDetail)
 router.route('/').put(protect, updateEventDetail)
 router.route('/like/:eventid').put(protect, likeEvent)

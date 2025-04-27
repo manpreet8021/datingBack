@@ -35,6 +35,7 @@ import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { useDispatch, useSelector } from 'react-redux';
 import { setLocation } from '../../../store/slice/authSlice';
 import { useInsertUserLocationMutation } from '../../../store/slice/api/authApiSlice';
+import { useFetchEventsMutation } from '../../../store/slice/api/eventApiSlice';
 
 export default function HomeScreen({ navigation }) {
   const [isSelect, setIsSelect] = useState(0);
@@ -43,6 +44,7 @@ export default function HomeScreen({ navigation }) {
   const SheetRef = useRef(null);
   const user = useSelector(state => state.auth)
   const [insertUserLocation, {isLoading}] = useInsertUserLocationMutation()
+  const [fetchEvents, {isLoading: FetchEvent}] = useFetchEventsMutation()
   const dispatch = useDispatch()
   const [hasPermission, setHasPermission] = useState(false)
 
@@ -57,8 +59,6 @@ export default function HomeScreen({ navigation }) {
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
       );
       if (granted) return true;
-
-      // Request only if not granted
       const newGrant = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
       );
@@ -81,7 +81,6 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     const getUserPermission = async () => {
-      console.log("here")
       setHasPermission(await requestLocationPermission())
       if (!hasPermission) return;
     };
@@ -89,17 +88,14 @@ export default function HomeScreen({ navigation }) {
   }, [])
 
   useEffect(()=> {
-    console.log(hasPermission)
-    console.log(user.location)
     if(hasPermission && !user.location.latitude) {
       const getUserLocation = async() => {
         Geolocation.getCurrentPosition(
           async (position) => {
-            console.log("here inside")
             const body = {latitude: position.coords?.latitude, longitude: position.coords.longitude}
             dispatch(setLocation(body))
-            const response = await insertUserLocation(body)
-            console.log(response)
+            await insertUserLocation(body)
+            const events = await fetchEvents({latitude: body.latitude, longitude: body.longitude, getUserEvent: isSelect !== 0})
           },
           (error) => console.log("Location Error:", error),
           { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
@@ -229,7 +225,7 @@ export default function HomeScreen({ navigation }) {
         </View>
         <View>
           {isSelect === 0 ? (
-            <MakeFriends data={MakeFriendsData} />
+            <MakeFriends/>
           ) : (
             <SearchPartnerCard />
           )}

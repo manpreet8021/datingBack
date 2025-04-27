@@ -3,7 +3,7 @@ import { sequelize } from '../config/sequelize.js';
 import User from './userModel.js';
 import LookUpValue from './lookUpValueModel.js';
 
-class Event extends Model {}
+class Event extends Model { }
 
 Event.init(
   {
@@ -70,8 +70,7 @@ Event.belongsTo(LookUpValue, { foreignKey: 'category', as: 'categoryInfo' });
 
 export default Event
 
-export const getEvent = async () => await Event.findAll()
 export const getEventById = async (id) => await Event.findByPk(id)
-export const getEventByCondition = async(condition) => await Event.findOne({ where: condition })
-export const addEvent = async (data, transaction) => await Event.create(data, {transaction})
-export const updateEvent = async (data, id, transaction) => await Event.update(data, {where: {id: id}, transaction})
+export const getEventByCondition = async (condition) => await Event.findOne({ where: condition })
+export const addEvent = async (data, transaction) => await Event.create(data, { transaction })
+export const updateEvent = async (data, id, transaction) => await Event.update(data, { where: { id: id }, transaction })

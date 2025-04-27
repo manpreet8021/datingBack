@@ -32,7 +32,7 @@ export default function EnterBirthDate({navigation}) {
   };
 
   const handleConfirm = date => {
-    var dateOfBirth = date.toISOString().split('T')[0];
+    var dateOfBirth = date.toISOString().toLocaleString()?.split('T')[0];
     setSelectedDate(dateOfBirth);
 
     hideDatePicker();

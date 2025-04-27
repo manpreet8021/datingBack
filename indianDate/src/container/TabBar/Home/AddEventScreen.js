@@ -18,18 +18,34 @@ import Typography from "../../../themes/typography";
 import { Dropdown } from 'react-native-element-dropdown';
 import { useGetLookupValueQuery } from "../../../store/slice/api/lookupApiSlice";
 import { useAddEventMutation } from "../../../store/slice/api/eventApiSlice";
+import { useNavigation } from "@react-navigation/native";
+import { StackNav } from "../../../navigation/navigationKey";
 
 export default function AddEventScreen() {
   const user = useSelector(state => state.auth)
+  const navigation = useNavigation();
   const { isLoading, data: categories } = useGetLookupValueQuery('event')
-  const [addEvent, {isLoading: addEventLoader}] = useAddEventMutation()
+  const [addEvent, { isLoading: addEventLoader }] = useAddEventMutation()
   const location = user?.location
 
   const [mapViewVisible, setMapViewVisible] = useState(false);
 
   const handleSubmit = async (e) => {
-    const response = await addEvent(e)
-    console.log(response)
+    try {
+      if(e.latitude == null || e.longitude == null) {
+        e.latitude = location.latitude
+        e.longitude = location.longitude
+      }
+      const response = await addEvent(e)
+      if(response.error){
+        throw new Error(response.error)
+      } else {
+        //show Toast
+        navigation.navigate(StackNav.TabNavigation)
+      }
+    } catch(error) {
+
+    }
   }
 
   const eventSchema = Yup.object().shape({
@@ -39,8 +55,8 @@ export default function AddEventScreen() {
       .max(50, 'Too Long!'),
     dateTime: Yup.string().required('Date and time for the event is required'),
     category: Yup.string().required('Please select a category'),
-    latitude: Yup.number().required('Location is required'),
-    longitude: Yup.number().required('Location is required')
+    latitude: Yup.number().nullable(),
+    longitude: Yup.number().nullable()
   });
 
   const initialState = {
@@ -72,7 +88,11 @@ export default function AddEventScreen() {
                 };
 
                 const handleConfirm = date => {
-                  var dateOfBirth = new Date(date.toISOString()).toLocaleString()
+                  var dateOfBirth = new Date(date.toISOString()).toLocaleString('en-CA', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                  })
                   setFieldValue('dateTime', dateOfBirth);
                   hideDatePicker();
                 };

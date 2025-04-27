@@ -45,6 +45,4 @@ EventMatch.belongsTo(Match, {
 export default EventMatch
 
 export const checkIfEventMatchExist = async (condition) => {return await EventMatch.findOne({where: condition})}
-export const insertEventMatch = async(data) => {
-    return await checkIfEventMatchExist(data) || await EventMatch.create(data);
-}
+export const insertEventMatch = async(data) => await EventMatch.create(data);

@@ -18,15 +18,21 @@ const eventApiSlice = apiSlice.injectEndpoints({
         }),
         updateEvent: builder.mutation({
             query: (data) => ({
-                url: 'auth/',
+                url: 'event/',
                 method: 'PUT',
                 body: data,
                 credentials: 'include'
             }),
         }),
+        fetchEvents: builder.mutation({
+            query: (data) => ({
+                url: `event/?latitude=${data.latitude}&longitude=${data.longitude}&getUserEvent=${data.getUserEvent}`,
+                method: 'GET',
+            })
+        })
     })
 })
 
-export const { useGetEventsQuery, useAddEventMutation, useUpdateEventMutation } = eventApiSlice;
+export const { useGetEventsQuery, useAddEventMutation, useUpdateEventMutation, useFetchEventsMutation } = eventApiSlice;
 
 export default eventApiSlice

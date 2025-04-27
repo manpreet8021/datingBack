@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 
 // custom import
@@ -17,9 +16,10 @@ import {
   getWidth,
   moderateScale,
 } from '../../../common/constants';
-import {colors, styles} from '../../../themes';
+import { colors, styles } from '../../../themes';
 import FText from '../../../components/common/FText';
-import {Comment_Icon, Like_Icon, Share_Icon} from '../../../assets/svg';
+import { Comment_Icon, Like_Icon, Share_Icon } from '../../../assets/svg';
+import { useSelector } from 'react-redux';
 
 export const LikeCommentData = [
   {
@@ -36,15 +36,14 @@ export const LikeCommentData = [
   },
 ];
 
+const likePress = (id) => {
+  
+}
+
 export default function MakeFriends(props) {
-  let {data, navigation} = props;
-  const swipe = useRef(new Animated.ValueXY()).current;
+  const event = useSelector(state => state.event)
 
-  useEffect(() => {
-    swipe.setValue({x: 0, y: 0});
-  }, [data]);
-
-  const LikeComment = ({item, index}) => {
+  const LikeComment = ({ item, index }) => {
     return (
       <TouchableOpacity style={localStyle.likeCommentBg} onPress={item.onPress}>
         {item.iconName}
@@ -52,16 +51,16 @@ export default function MakeFriends(props) {
     );
   };
 
-  const renderData = ({item, index}) => {
+  const renderData = ({ item, index }) => {
     return (
       <TouchableOpacity activeOpacity={0.9}>
         <ImageBackground
           style={[localStyle.bgImage]}
-          imageStyle={{borderRadius: moderateScale(32)}}
+          imageStyle={{ borderRadius: moderateScale(32) }}
           source={item.bgImage}>
           <LinearGradient
-            start={{x: 0.6, y: 0}}
-            end={{x: 1, y: 1.3}}
+            start={{ x: 0.6, y: 0 }}
+            end={{ x: 1, y: 1.3 }}
             colors={[colors.linearColor1, colors.linearColor4]}
             style={localStyle.innerContainer}>
             <View style={localStyle.mainViewContainer}>
@@ -79,12 +78,12 @@ export default function MakeFriends(props) {
                 </FText>
                 <View style={localStyle.userImageAndName}>
                   <Image
-                    source={item.profileImage}
+                    src={item.profileImage}
                     style={localStyle.userProfileImage}
                   />
                   <View style={localStyle.userNameContainer}>
                     <FText type={'S14'} color={colors.white}>
-                      {item.userName}
+                      {item.username}
                     </FText>
                     <FText
                       type={'S14'}
@@ -112,7 +111,7 @@ export default function MakeFriends(props) {
 
   return (
     <FlatList
-      data={data}
+      data={event.events}
       keyExtractor={item => item.id}
       renderItem={renderData}
       vertical={true}
@@ -165,6 +164,8 @@ const localStyle = StyleSheet.create({
   userProfileImage: {
     height: moderateScale(48),
     width: moderateScale(48),
+    borderRadius: 40, // half of width/height to make it a circle
+    resizeMode: 'cover'
   },
   userNameContainer: {
     ...styles.mt5,

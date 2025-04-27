@@ -4,7 +4,7 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 
 import CustomCountDown from '../../components/common/CustomCountDown';
 import { colors, styles } from '../../themes';
-import { ACCOUNT_PARTIAL_CREATED, moderateScale } from '../../common/constants';
+import { ACCOUNT_PARTIAL_CREATED, ACCOUNT_CREATED, moderateScale } from '../../common/constants';
 import Typography from '../../themes/typography';
 import { AuthNav, StackNav } from '../../navigation/navigationKey';
 import FSafeAreaView from '../../components/common/FSafeAreaView';
@@ -47,7 +47,6 @@ export default function VerifyLoginOtp({ navigation }) {
   };
 
   const onOtpChange = text => {
-    console.log(text)
     setOtp(text);
   };
 
