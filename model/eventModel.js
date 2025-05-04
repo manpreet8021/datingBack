@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
-import User from './userModel.js';
+import User from './UserModel.js';
 import LookUpValue from './lookUpValueModel.js';
 
 class Event extends Model { }

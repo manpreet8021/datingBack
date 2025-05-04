@@ -3,7 +3,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import {updateOtpActive, insertOtp} from "../model/otpLogModel.js";
 import twilio from 'twilio'
-import { checkOrCreateUser, updateUser } from "../model/userModel.js";
+import { checkOrCreateUser, updateUser } from "../model/UserModel.js";
 import { generateToken } from "../config/jwtTojen.js";
 import { sequelize } from "../config/sequelize.js";
 import { insertInterest } from "../model/userInterestModel.js";

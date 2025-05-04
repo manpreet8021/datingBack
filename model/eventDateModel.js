@@ -1,6 +1,6 @@
 import { DataTypes, Model, Op, literal } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
-import User from './userModel.js';
+import User from './UserModel.js';
 import Event from './eventModel.js';
 import LookUpValue from './lookUpValueModel.js';
 import UserImage from "../model/userImagesModel.js";

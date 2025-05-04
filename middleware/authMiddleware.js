@@ -1,6 +1,6 @@
 import { verifyToken } from "../config/jwtTojen.js";
 import asyncHandler from "./asyncHandler.js";
-import { getUser } from "../model/userModel.js";
+import { getUser } from "../model/UserModel.js";
 
 const protect = asyncHandler(async(req, res, next) => {
     let token = '';
