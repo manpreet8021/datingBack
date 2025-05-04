@@ -3,7 +3,7 @@ import { saveBulkLookUpData } from "../model/lookUpDataModel.js";
 import { bulkInsert } from "../model/lookUpValueModel.js";
 import LookUpValue from "../model/lookUpValueModel.js";
 import OtpLog from "../model/otpLogModel.js";
-import User from "../model/userModel.js";
+import User from "../model/UserModel.js";
 import LookUpData from "../model/lookUpDataModel.js";
 import UserInterest from "../model/userInterestModel.js";
 import UserImage from "../model/userImagesModel.js";

@@ -6,6 +6,8 @@ buildscript {
         targetSdkVersion = 34
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.0.21"
+        googlePlayServicesAuthVersion = "20.7.0"
+        googlePlayServicesLocationVersion = "21.0.1"
     }
     repositories {
         google()
@@ -15,6 +17,7 @@ buildscript {
         classpath('com.android.tools.build:gradle:8.9.1')
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("com.google.gms:google-services:4.4.0")
     }
 }
 

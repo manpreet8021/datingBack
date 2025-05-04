@@ -90,16 +90,20 @@ export default function HomeScreen({ navigation }) {
   useEffect(()=> {
     if(hasPermission && !user.location.latitude) {
       const getUserLocation = async() => {
-        Geolocation.getCurrentPosition(
-          async (position) => {
-            const body = {latitude: position.coords?.latitude, longitude: position.coords.longitude}
-            dispatch(setLocation(body))
-            await insertUserLocation(body)
-            const events = await fetchEvents({latitude: body.latitude, longitude: body.longitude, getUserEvent: isSelect !== 0})
-          },
-          (error) => console.log("Location Error:", error),
-          { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
-        );
+        try{
+          Geolocation.getCurrentPosition(
+            async (position) => {
+              const body = {latitude: position.coords?.latitude, longitude: position.coords.longitude}
+              dispatch(setLocation(body))
+              await insertUserLocation(body)
+              const events = await fetchEvents({latitude: body.latitude, longitude: body.longitude, getUserEvent: isSelect !== 0})
+            },
+            (error) => console.log("Location Error:", error),
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000, forceRequestLocation: true, showLocationDialog: true }
+          );
+        } catch(error) {
+          console.log(error)
+        }
       }
       getUserLocation()
     }

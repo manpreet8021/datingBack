@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "876614577382",
+    "project_id": "yujin-8b576",
+    "storage_bucket": "yujin-8b576.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876614577382:android:2e7c1e16445f8082f25f27",
+        "android_client_info": {
+          "package_name": "com.indiandate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876614577382-n30pfiha3ksk18sc89g5spac1dh8p8m5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6caia3Q0zAxEqigWnfzQRfmA0uUuWBKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876614577382-n30pfiha3ksk18sc89g5spac1dh8p8m5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "876614577382-1pst8aqsc6dlgqbj5s8f6vhsvhcvv6nt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.frontend"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
