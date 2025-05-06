@@ -5,23 +5,27 @@ import { checkIfMatchExist, insertMatch } from "../model/matchModel.js";
 import { insertEventMatch } from "../model/eventMatchModel.js";
 
 const addMatchSchema = Joi.object({
-	event_id: Joi.number().required()
+	eventid: Joi.number().required()
 })
 
 const matchUserForEvent = asyncHandler(async (req, res) => {
-  const user = req.user.id
-	const {error} = addMatchSchema.validate({event_id})
-  
-	if(error) {
+	const user = req.user.id
+	const { error } = addMatchSchema.validate({
+		eventid: req.body.eventid
+	})
+
+	if (error) {
 		res.status(400)
 		throw new Error("Event id is required")
 	}
-	
-	const {event_id} = req.body
-	
-	const event = await getEventById(event_id)
+
+	const { eventid } = req.body
+
+	const event = await getEventById(eventid)
+
 	if (event) {
-		const alreadyMatch = await checkIfMatchExist(user, event.user_id)
+		const alreadyMatch = await checkIfMatchExist(user, event.dataValues.userId)
+		
 		if (alreadyMatch) {
 			if (alreadyMatch.dataValues.status === "matched") {
 				return res.status(200).json("Already a match");
@@ -31,12 +35,12 @@ const matchUserForEvent = asyncHandler(async (req, res) => {
 					responded_at: new Date(),
 					status: "matched"
 				});
-				await insertEventMatch({event_id: event.dataValues.userId, match_id: alreadyMatch.dataValues.id})
+				await insertEventMatch({ event_id: event.dataValues.id, match_id: alreadyMatch.dataValues.id })
 			}
 		} else {
-			const data = {initiator: user,responder: event.dataValues.userId}
+			const data = { initiator: user, responder: event.dataValues.userId }
 			const match = await insertMatch(data)
-			const eventMatch = await insertEventMatch({event_id: event.dataValues.id, match_id: match.dataValues.id})
+			const eventMatch = await insertEventMatch({ event_id: event.dataValues.id, match_id: match.dataValues.id })
 			res.status(201).json()
 		}
 	} else {

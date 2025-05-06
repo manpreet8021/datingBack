@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { ImageBackground, StyleSheet, TouchableOpacity, View } from "react-native";
 import FText from "../../../components/common/FText";
 import FSafeAreaView from "../../../components/common/FSafeAreaView";
 import FHeader from "../../../components/common/FHeader";
@@ -9,7 +9,7 @@ import strings from "../../../i18n/strings";
 import { Formik } from "formik"
 import FButton from "../../../components/common/FButton";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { getHeight, moderateScale } from "../../../common/constants";
 import { useSelector } from "react-redux";
 import MapView from "../../../components/Home/MapView";
@@ -20,6 +20,7 @@ import { useGetLookupValueQuery } from "../../../store/slice/api/lookupApiSlice"
 import { useAddEventMutation } from "../../../store/slice/api/eventApiSlice";
 import { useNavigation } from "@react-navigation/native";
 import { StackNav } from "../../../navigation/navigationKey";
+import ImageCropPicker from "react-native-image-crop-picker";
 
 export default function AddEventScreen() {
   const user = useSelector(state => state.auth)
@@ -32,18 +33,18 @@ export default function AddEventScreen() {
 
   const handleSubmit = async (e) => {
     try {
-      if(e.latitude == null || e.longitude == null) {
+      if (e.latitude == null || e.longitude == null) {
         e.latitude = location.latitude
         e.longitude = location.longitude
       }
       const response = await addEvent(e)
-      if(response.error){
+      if (response.error) {
         throw new Error(response.error)
       } else {
         //show Toast
         navigation.navigate(StackNav.TabNavigation)
       }
-    } catch(error) {
+    } catch (error) {
 
     }
   }
@@ -65,8 +66,10 @@ export default function AddEventScreen() {
     dateTime: '',
     category: '',
     latitude: null,
-    longitude: null
+    longitude: null,
+    thumbnail: null
   }
+
   return (
     <FSafeAreaView>
       <FHeader />
@@ -96,6 +99,25 @@ export default function AddEventScreen() {
                   setFieldValue('dateTime', dateOfBirth);
                   hideDatePicker();
                 };
+
+                const onPressGallery = useCallback(() => {
+                  ImageCropPicker.openPicker({
+                    mediaType: 'photo',
+                    includeBase64: true,
+                  }).then(image => {
+                    const updatedItem = {
+                      image: {
+                        uri: image.path,
+                        name: image.path.substring(image.path.lastIndexOf('/') + 1),
+                        type: image.mime,
+                      }
+                    };
+                    console.log(updatedItem)
+                    setFieldValue('thumbnail', updatedItem)
+                  });
+                },
+                  [values.thumbnail],
+                );
 
                 return (
                   <View style={localStyle.map}>
@@ -195,6 +217,21 @@ export default function AddEventScreen() {
                               {values.latitude ? 'Location Added' : 'Event Location'}
                             </FText>
 
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={[
+                              localStyle.datePikerStyle,
+                              {
+                                borderColor: colors.white,
+                              },
+                            ]}
+                            onPress={() => { onPressGallery('thumnail'); }}>
+                            <FText
+                              type={'M16'}
+                              color={values.thumbnail ? colors.black : colors.grayScale400}
+                              style={styles.ml5}>
+                              {values.thumbnail ? <ImageBackground source={values.thumbnail?.uri} /> : 'Event Thumbnail'}
+                            </FText>
                           </TouchableOpacity>
                           <FText
                             style={{

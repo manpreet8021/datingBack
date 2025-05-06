@@ -20,36 +20,19 @@ import { colors, styles } from '../../../themes';
 import FText from '../../../components/common/FText';
 import { Comment_Icon, Like_Icon, Share_Icon } from '../../../assets/svg';
 import { useSelector } from 'react-redux';
-
-export const LikeCommentData = [
-  {
-    id: 1,
-    iconName: <Like_Icon />,
-  },
-  {
-    id: 2,
-    iconName: <Comment_Icon />,
-  },
-  {
-    id: 3,
-    iconName: <Share_Icon />,
-  },
-];
-
-const likePress = (id) => {
-  
-}
+import { useSetEventMatchMutation } from '../../../store/slice/api/matchApiSlice';
 
 export default function MakeFriends(props) {
   const event = useSelector(state => state.event)
+  const [setEventMatch, {isLoading}] = useSetEventMatchMutation()
 
-  const LikeComment = ({ item, index }) => {
-    return (
-      <TouchableOpacity style={localStyle.likeCommentBg} onPress={item.onPress}>
-        {item.iconName}
-      </TouchableOpacity>
-    );
-  };
+  const likePress = async(id) => {
+    const response = await setEventMatch({eventid: id})
+  }
+  
+  const commentPress = (id) => {
+    
+  }
 
   const renderData = ({ item, index }) => {
     return (
@@ -98,9 +81,15 @@ export default function MakeFriends(props) {
             <View style={localStyle.likeCommentContainer}>
               <View style={localStyle.lineView} />
               <View>
-                {LikeCommentData.map((item, index) => {
-                  return <LikeComment item={item} />;
-                })}
+                <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => likePress(item.id)}>
+                  <Like_Icon />
+                </TouchableOpacity>
+                <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => commentPress(item.id)}>
+                  <Comment_Icon />
+                </TouchableOpacity>
+                <TouchableOpacity style={localStyle.likeCommentBg}>
+                  <Share_Icon />
+                </TouchableOpacity>
               </View>
             </View>
           </LinearGradient>
