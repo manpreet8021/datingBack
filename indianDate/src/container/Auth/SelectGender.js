@@ -29,7 +29,7 @@ export default function SelectGender({navigation}) {
       alert(strings.pleaseSelectYourGender);
     } else {
       dispatch(setUser({gender: select}));
-      navigation.navigate(AuthNav.SelectInterest);
+      navigation.navigate(AuthNav.LookingFor);
     }
   };
 

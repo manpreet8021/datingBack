@@ -67,7 +67,7 @@ export const updateUser = async (data, id, transaction) => {
   return user
 }
 export const getUser = async (id) => { 
-  const user = await User.findOne({ where: { id } });
+  const user = await User.findOne({ where: { id: id, active: true, updated: true } });
   return user
 }
 export default User

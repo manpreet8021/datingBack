@@ -22,6 +22,7 @@ export const AuthNav = {
   AccountName: 'AccountName',
   EnterBirthDate: 'EnterBirthDate',
   SelectGender: 'SelectGender',
+  LookingFor: 'LookingFor',
   SelectInterest: 'SelectInterest',
   UploadPhoto: 'UploadPhoto',
   VerifyLoginOtp: 'VerifyLoginOtp',

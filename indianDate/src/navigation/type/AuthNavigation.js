@@ -24,6 +24,10 @@ export default function AuthNavigation() {
         component={AuthRoute.SelectGender}
       />
       <Stack.Screen
+        name={AuthNav.LookingFor}
+        component={AuthRoute.LookingFor}
+      />
+      <Stack.Screen
         name={AuthNav.SelectInterest}
         component={AuthRoute.SelectInterest}
       />

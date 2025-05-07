@@ -7,8 +7,6 @@ import {
 } from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-// custom Imports
 import {colors, styles} from '../../themes';
 import {deviceWidth, moderateScale} from '../../common/constants';
 import FText from '../common/FText';
@@ -33,7 +31,7 @@ export default function StepIndicator({step, style, rightIcon, onPressNext}) {
         <FText type={'B20'} color={colors.primary} style={styles.selfEnd}>
           {step}
           <FText type={'B20'} color={colors.stepColor}>
-            {'/5'}
+            {'/6'}
           </FText>
         </FText>
         {rightIcon ? (
@@ -50,7 +48,7 @@ export default function StepIndicator({step, style, rightIcon, onPressNext}) {
         ) : null}
       </View>
       <FlatList
-        data={[1, 2, 3, 4, 5, 6]}
+        data={[1, 2, 3, 4, 5, 6, 7]}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         horizontal
@@ -66,7 +64,7 @@ const localStyle = StyleSheet.create({
     ...styles.mb30,
   },
   HeaderStyle: {
-    width: moderateScale(70),
+    width: moderateScale(60),
     height: moderateScale(4),
     ...styles.mt10,
   },

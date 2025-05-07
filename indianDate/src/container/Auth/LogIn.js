@@ -77,6 +77,7 @@ export default function LogIn({navigation}) {
           email: response.data?.user?.email
         }
         const user = await googleLogin(data)
+        
         await EncryptedStorage.setItem('token', user?.data.token)
         if(user?.data.updated) {
           await setAsyncStorageData(ACCOUNT_CREATED, true)

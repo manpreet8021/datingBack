@@ -99,26 +99,31 @@ export default function UploadPhoto({navigation}) {
   };
 
   const onPressNext = async () => {
+    const formData = new FormData();
+    addImages.forEach((item, index) => {
+      if (item.image && item.image.uri) {
+        formData.append('image', {
+          uri: item.image.uri,
+          name: item.image.name,
+          type: item.image.type,
+        });
+      }
+    });
+    addImage.forEach((item, index) => {
+      if (item.image && item.image.uri) {
+        formData.append('image', {
+          uri: item.image.uri,
+          name: item.image.name,
+          type: item.image.type,
+        });
+      }
+    });
+    const hasImages = addImages.some(item => item.image && item.image.uri) || addImage.some(item => item.image && item.image.uri);
+    if(selectImage === null || !hasImages) {
+      alert('Please select at least two image');
+      return
+    }
     try {
-      const formData = new FormData();
-      addImages.forEach((item, index) => {
-        if (item.image && item.image.uri) {
-          formData.append('image', {
-            uri: item.image.uri,
-            name: item.image.name,
-            type: item.image.type,
-          });
-        }
-      });
-      addImage.forEach((item, index) => {
-        if (item.image && item.image.uri) {
-          formData.append('image', {
-            uri: item.image.uri,
-            name: item.image.name,
-            type: item.image.type,
-          });
-        }
-      });
       auth.userInfo.interest.forEach(item => {
         formData.append('interest', item);
       });
@@ -134,6 +139,9 @@ export default function UploadPhoto({navigation}) {
         });
       }
       const response = await updateUserDetail(formData);
+      if(response.error) {
+        throw response.error;
+      }
       await setAsyncStorageData(ACCOUNT_CREATED, true);
       await setAsyncStorageData(USER_DATA, response);
       setModalVisible(true);
@@ -227,7 +235,7 @@ export default function UploadPhoto({navigation}) {
           </View>
           <FButton title={strings.next} onPress={onPressNext} />
         </View>
-        <StepIndicator step={5} />
+        <StepIndicator step={6} />
         <VerifiedModal
           visible={modalVisible}
           onPressStarted={onPressGetStarted}

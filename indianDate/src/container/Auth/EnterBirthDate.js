@@ -1,21 +1,21 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
 // custom import
 import FSafeAreaView from '../../components/common/FSafeAreaView';
 import FHeader from '../../components/common/FHeader';
-import {colors, styles} from '../../themes';
+import { colors, styles } from '../../themes';
 import KeyBoardAvoidWrapper from '../../components/common/KeyBoardAvoidWrapper';
-import {AuthNav} from '../../navigation/navigationKey';
+import { AuthNav } from '../../navigation/navigationKey';
 import FText from '../../components/common/FText';
 import strings from '../../i18n/strings';
 import StepIndicator from '../../components/Home/StepIndicator';
-import {getHeight, moderateScale} from '../../common/constants';
-import {useDispatch, useSelector} from 'react-redux';
-import {setUser} from '../../store/slice/authSlice';
+import { getHeight, moderateScale } from '../../common/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../store/slice/authSlice';
 
-export default function EnterBirthDate({navigation}) {
+export default function EnterBirthDate({ navigation }) {
   const user = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
@@ -26,13 +26,16 @@ export default function EnterBirthDate({navigation}) {
     if (selectedDate === '') {
       alert(strings.pleaseEnterYourBirthDate);
     } else {
-      dispatch(setUser({dob: selectedDate}));
+      dispatch(setUser({ dob: selectedDate }));
       navigation.navigate(AuthNav.SelectGender);
     }
   };
 
   const handleConfirm = date => {
-    var dateOfBirth = date.toISOString().toLocaleString()?.split('T')[0];
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = date.getFullYear();
+    const dateOfBirth = `${day}/${month}/${year}`;
     setSelectedDate(dateOfBirth);
 
     hideDatePicker();
@@ -43,13 +46,6 @@ export default function EnterBirthDate({navigation}) {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
-
-  const formatDate = (value) => {
-    const day = value.split('-')[2];
-    const month = value.split('-')[1];
-    const year = value.split('-')[0];
-     return day + '/' + month + '/' + year;
-  }
 
   return (
     <FSafeAreaView>
@@ -72,7 +68,7 @@ export default function EnterBirthDate({navigation}) {
                 type={'M16'}
                 color={selectedDate ? colors.black : colors.grayScale400}
                 style={styles.ml5}>
-                {selectedDate ? formatDate(selectedDate) : strings.birthDate}
+                {selectedDate ? selectedDate : strings.birthDate}
               </FText>
               <DateTimePicker
                 isVisible={isDatePickerVisible}

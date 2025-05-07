@@ -19,6 +19,7 @@ import UploadPhoto from '../container/Auth/UploadPhoto';
 import VerifyLoginOtp from '../container/Auth/VerifyLoginOtp';
 import OnBoarding from '../container/OnBoarding';
 import EnterBirthDate from '../container/Auth/EnterBirthDate';
+import LookingFor from '../container/Auth/LookingFor';
 import StoryView from '../container/TabBar/Home/UserStory/StoryView';
 
 // Tab Screen
@@ -53,6 +54,7 @@ export const AuthRoute = {
   SelectGender,
   SelectInterest,
   UploadPhoto,
+  LookingFor,
   VerifyLoginOtp,
 };
 

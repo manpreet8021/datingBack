@@ -28,6 +28,7 @@ const authSlice = createSlice({
           name: '',
           dob: '',
           gender: '',
+          lookingFor: [],
           interest: []
         }
       }

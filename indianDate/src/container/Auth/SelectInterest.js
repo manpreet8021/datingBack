@@ -77,7 +77,7 @@ export default function SelectInterest({navigation}) {
             />
           </View>
         </View>
-        <StepIndicator step={4} rightIcon onPressNext={onPressNext} />
+        <StepIndicator step={5} rightIcon onPressNext={onPressNext} />
       </View>
     </FSafeAreaView>
   );
@@ -101,8 +101,7 @@ const localStyle = StyleSheet.create({
     ...styles.mh5,
   },
   chipMainContainer: {
-    ...styles.wrap,
-    ...styles.flexRow,
+    ...styles.wrap, 
   },
   columnWrapperStyle: {
     ...styles.wrap,
