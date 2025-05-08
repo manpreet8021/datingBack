@@ -10,6 +10,7 @@ import { insertInterest } from "../model/userInterestModel.js";
 import { imageUpload, uploadMultipleImages } from "../config/imageUpload.js";
 import { insertImages } from "../model/userImagesModel.js";
 import { insertLocation } from "../model/userLocationModel.js";
+import moment from 'moment';
 
 const validatePhoneNumber = (phone, countryCode) => {
   const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
@@ -132,9 +133,9 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   imageValue.push(imageInfo)
 
   const transaction = await sequelize.transaction();
-
   const { name, dob, gender, interest } = req.body
 
+  const dateOfBirth = moment(dob, 'DD/MM/YYYY').toDate()
   const interestData = interest.map((interest_id) => ({
     user_id: req.user.id,
     interest_id,
@@ -142,7 +143,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   }));
 
   try {
-    await updateUser({ name, dob, gender, updated: true }, req.user.id, transaction)
+    await updateUser({ name, dateOfBirth, gender, updated: true }, req.user.id, transaction)
     await insertInterest(interestData, transaction)
     await insertImages(imageValue, transaction)
     await transaction.commit();

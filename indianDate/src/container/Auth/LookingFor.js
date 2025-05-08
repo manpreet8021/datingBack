@@ -16,7 +16,7 @@ import { useGetLookupValueQuery } from '../../store/slice/api/lookupApiSlice';
 
 export default function LookingFor({ navigation }) {
 	const user = useSelector(state => state.auth);
-	const [select, setSelect] = useState(user.userInfo?.lookingFor);
+	const [select, setSelect] = useState(user.userInfo?.lookingFor || []);
 	const dispatch = useDispatch();
 	const { data: genderData, isLoading } = useGetLookupValueQuery('gender');
 
