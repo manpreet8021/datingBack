@@ -71,13 +71,14 @@ export default function LogIn({navigation}) {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
+        console.log(response)
         const data = {
           token: response.data?.idToken,
           name: response.data?.user?.name,
           email: response.data?.user?.email
         }
         const user = await googleLogin(data)
-        
+        console.log(user)
         await EncryptedStorage.setItem('token', user?.data.token)
         if(user?.data.updated) {
           await setAsyncStorageData(ACCOUNT_CREATED, true)
@@ -91,6 +92,7 @@ export default function LogIn({navigation}) {
         }       
       }
     } catch (error) {
+      console.log(error);
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.ONE_TAP_START_FAILED:

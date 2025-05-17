@@ -1,7 +1,7 @@
 import Joi from "joi";
 import asyncHandler from "../middleware/asyncHandler.js";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import {updateOtpActive, insertOtp} from "../model/otpLogModel.js";
+import { updateOtpActive, insertOtp } from "../model/otpLogModel.js";
 import twilio from 'twilio'
 import { checkOrCreateUser, updateUser } from "../model/UserModel.js";
 import { generateToken } from "../config/jwtTojen.js";
@@ -14,7 +14,7 @@ import moment from 'moment';
 
 const validatePhoneNumber = (phone, countryCode) => {
   const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
-  return phoneNumber ? {number: phoneNumber.isValid() && phoneNumber.number, valid: phoneNumber.isValid()} : {number: null, valid: false};
+  return phoneNumber ? { number: phoneNumber.isValid() && phoneNumber.number, valid: phoneNumber.isValid() } : { number: null, valid: false };
 };
 
 const sendOtpValidationSchema = Joi.object({
@@ -57,11 +57,11 @@ const sendOtp = asyncHandler(async (req, res) => {
 
   const { phone, countryCode } = req.body;
   const validate = validatePhoneNumber(phone, countryCode)
-  if(!validate.valid) {
+  if (!validate.valid) {
     res.status(400)
     throw new Error('Invalid phone number')
   }
-  const updated = await updateOtpActive({active: false}, {number: phone})
+  const updated = await updateOtpActive({ active: false }, { number: phone })
 
   const otp = Math.floor(1000 + Math.random() * 9000);
   const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
@@ -72,7 +72,7 @@ const sendOtp = asyncHandler(async (req, res) => {
     from: process.env.TWILIO_NUMBER,
   })
 
-  const inserted = await insertOtp({number: phone, otp: otp, active: true, response: response?.sid})
+  const inserted = await insertOtp({ number: phone, otp: otp, active: true, response: response?.sid })
 
   res.status(200).json({ message: "OTP sent successfully" });
 });
@@ -89,7 +89,7 @@ const validateOtp = asyncHandler(async (req, res) => {
 
   const { phone, otp } = req.body;
 
-  const [updatedCount] = await updateOtpActive({active: false}, {number: phone, otp: otp})
+  const [updatedCount] = await updateOtpActive({ active: false }, { number: phone, otp: otp })
 
   if (updatedCount === 0) {
     res.status(400);
@@ -122,16 +122,30 @@ const validateOtp = asyncHandler(async (req, res) => {
 const updateUserDetail = asyncHandler(async (req, res) => {
   const { error } = validateUserUpdateSchema.validate(req.body, { abortEarly: false })
 
-  if(error) {
+  if (error) {
     res.status(400);
     throw new Error(error.message)
   }
-
-  const imageInfo = await imageUpload(req.files.profile[0].path, 'profile', req.user.id, 'main')
-  const imagesInfo = await uploadMultipleImages(req.files.image, 'profile', req.user.id, 'secondary')
-  let imageValue = [...imagesInfo]
-  imageValue.push(imageInfo)
-
+  let imageInfo = {}
+  let imagesInfo = {}
+  let imageValue = []
+  if (req.files) {
+    if (req.files.profile && req.files.profile.length) {
+      imageInfo = await imageUpload(req.files.profile[0].path, 'profile', req.user.id, 'main')
+      imageValue.push(imageInfo)
+    } else {
+      res.status(400);
+      throw new Error("Thumbnail not found")
+    }
+    if(req.files.image) {
+      imagesInfo = await uploadMultipleImages(req.files.image, 'profile', req.user.id, 'secondary')
+      imageValue.push(...imagesInfo)
+    } else {
+      res.status(400);
+      throw new Error("Image not found")
+    }
+  }
+  
   const transaction = await sequelize.transaction();
   const { name, dob, gender, interest } = req.body
 
@@ -147,7 +161,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
     await insertInterest(interestData, transaction)
     await insertImages(imageValue, transaction)
     await transaction.commit();
-    res.status(200).json({name: name})
+    res.status(200).json({ name: name })
   } catch (error) {
     await transaction.rollback();
     res.status(400)
@@ -156,7 +170,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
 })
 
 const googleLogin = asyncHandler(async (req, res) => {
-  const {error} = validateGoogleLoginSchema.validate(req.body, {abortEarly: false})
+  const { error } = validateGoogleLoginSchema.validate(req.body, { abortEarly: false })
 
   if (error) {
     res.status(400);
@@ -190,17 +204,17 @@ const googleLogin = asyncHandler(async (req, res) => {
 })
 
 const insertUserLocation = asyncHandler(async (req, res) => {
-  const {error} = insertLocationSchema.validate(req.body, {abortEarly: false})
+  const { error } = insertLocationSchema.validate(req.body, { abortEarly: false })
 
-  if(error) {
+  if (error) {
     res.status(400)
     throw new Error(error.message)
   }
-  
-  const user_id = req.user.id
-  const {latitude, longitude} = req.body
 
-  const location = await insertLocation({latitude, longitude, user_id})
+  const user_id = req.user.id
+  const { latitude, longitude } = req.body
+
+  const location = await insertLocation({ latitude, longitude, user_id })
   res.status(201).json()
 })
 

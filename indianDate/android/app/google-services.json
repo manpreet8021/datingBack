@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "876614577382-irb8i3uvord8456sufp8vu99sint9eep.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.indiandate",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "876614577382-j886o4hf5e7npm1igc837skpeua59rnu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.indiandate",
+            "certificate_hash": "cc27247be677eea0fbc2789162a4537af40bbb48"
+          }
+        },
+        {
           "client_id": "876614577382-n30pfiha3ksk18sc89g5spac1dh8p8m5.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -31,10 +47,10 @@
               "client_type": 3
             },
             {
-              "client_id": "876614577382-1pst8aqsc6dlgqbj5s8f6vhsvhcvv6nt.apps.googleusercontent.com",
+              "client_id": "876614577382-obb70cmpcetlg38mm6cne3m9bi2btdn9.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.reactjs.native.example.frontend"
+                "bundle_id": "org.reactjs.native.example.indianDate"
               }
             }
           ]
