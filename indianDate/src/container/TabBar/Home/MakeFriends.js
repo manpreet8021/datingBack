@@ -40,7 +40,7 @@ export default function MakeFriends(props) {
         <ImageBackground
           style={[localStyle.bgImage]}
           imageStyle={{ borderRadius: moderateScale(32) }}
-          source={item.bgImage}>
+          source={{uri: item.image_url}}>
           <LinearGradient
             start={{ x: 0.6, y: 0 }}
             end={{ x: 1, y: 1.3 }}
@@ -71,7 +71,7 @@ export default function MakeFriends(props) {
                     <FText
                       type={'S14'}
                       color={colors.grayScale50}
-                      style={styles.mt5}>
+                      style={[styles.mt5, { flexShrink: 1, flexWrap: 'wrap', maxWidth: 200 }]}>
                       {item.description}
                     </FText>
                   </View>
@@ -79,16 +79,12 @@ export default function MakeFriends(props) {
               </View>
             </View>
             <View style={localStyle.likeCommentContainer}>
-              <View style={localStyle.lineView} />
               <View>
                 <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => likePress(item.id)}>
                   <Like_Icon />
                 </TouchableOpacity>
                 <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => commentPress(item.id)}>
                   <Comment_Icon />
-                </TouchableOpacity>
-                <TouchableOpacity style={localStyle.likeCommentBg}>
-                  <Share_Icon />
                 </TouchableOpacity>
               </View>
             </View>
@@ -119,13 +115,14 @@ const localStyle = StyleSheet.create({
     height: getHeight(343),
     width: deviceWidth - moderateScale(40),
     ...styles.mv10,
+    overflow: 'hidden'
   },
   innerContainer: {
-    ...styles.flex,
-    height: getHeight(100),
+    height: getHeight(343),
     width: deviceWidth - moderateScale(40),
     borderRadius: moderateScale(32),
     ...styles.rowSpaceBetween,
+    ...styles.flex,
   },
   mainViewContainer: {
     ...styles.justifyBetween,
@@ -162,9 +159,10 @@ const localStyle = StyleSheet.create({
   },
   likeCommentContainer: {
     width: getWidth(70),
-    height: getHeight(195),
+    height: getHeight(150),
     borderRadius: moderateScale(24),
     backgroundColor: colors.transparent,
+    margin: moderateScale(5),
     ...styles.flexRow,
     ...styles.center,
   },

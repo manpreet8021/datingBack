@@ -21,6 +21,7 @@ import { useAddEventMutation } from "../../../store/slice/api/eventApiSlice";
 import { useNavigation } from "@react-navigation/native";
 import { StackNav } from "../../../navigation/navigationKey";
 import ImageCropPicker from "react-native-image-crop-picker";
+import AddPhotos from "../../../components/common/AddPhotos";
 
 export default function AddEventScreen() {
   const user = useSelector(state => state.auth)
@@ -33,19 +34,28 @@ export default function AddEventScreen() {
 
   const handleSubmit = async (e) => {
     try {
-      if (e.latitude == null || e.longitude == null) {
-        e.latitude = location.latitude
-        e.longitude = location.longitude
-      }
-      const response = await addEvent(e)
+      const formData = new FormData();
+      formData.append('category', e.category)
+      formData.append('dateTime', e.dateTime)
+      formData.append('description', e.description)
+      formData.append('latitude', e.latitude || location.latitude)
+      formData.append('longitude', e.longitude || location.longitude)
+      formData.append('title', e.title)
+      formData.append('thumbnail', {
+        uri: e.thumbnail.image.uri,
+        name: e.thumbnail.image.name,
+        type: e.thumbnail.image.type,
+      })
+
+      const response = await addEvent(formData)
+      console.log(response)
       if (response.error) {
         throw new Error(response.error)
       } else {
-        //show Toast
         navigation.navigate(StackNav.TabNavigation)
       }
     } catch (error) {
-
+      console.log(error)
     }
   }
 
@@ -67,7 +77,7 @@ export default function AddEventScreen() {
     category: '',
     latitude: null,
     longitude: null,
-    thumbnail: null
+    thumbnail: {id: 0, image: {}, type: 'eventImage'}
   }
 
   return (
@@ -218,21 +228,12 @@ export default function AddEventScreen() {
                             </FText>
 
                           </TouchableOpacity>
-                          <TouchableOpacity
-                            style={[
-                              localStyle.datePikerStyle,
-                              {
-                                borderColor: colors.white,
-                              },
-                            ]}
-                            onPress={() => { onPressGallery('thumnail'); }}>
-                            <FText
-                              type={'M16'}
-                              color={values.thumbnail ? colors.black : colors.grayScale400}
-                              style={styles.ml5}>
-                              {values.thumbnail ? <ImageBackground source={values.thumbnail?.uri} /> : 'Event Thumbnail'}
-                            </FText>
-                          </TouchableOpacity>
+                          <AddPhotos
+                            image={values.thumbnail.image}
+                            type={values.thumbnail.type}
+                            key={values.thumbnail.id}
+                            onPressGallery={onPressGallery}
+                          />
                           <FText
                             style={{
                               ...localStyle.errorText,

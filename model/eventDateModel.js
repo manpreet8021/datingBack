@@ -52,7 +52,8 @@ export const getEvent = async (includeUserEvents, latitude, longitude, userId, l
           cos(radians(:latitude)) * cos(radians(CAST(e.latitude AS DECIMAL(10,6)))) * 
           cos(radians(CAST(e.longitude AS DECIMAL(10,6))) - radians(:longitude)) + 
           sin(radians(:latitude)) * sin(radians(CAST(e.latitude AS DECIMAL(10,6))))
-        )) AS distance
+        )) AS distance,
+        e.image_url as image_url
       FROM Event e
       INNER JOIN EventDate ed ON ed.eventId = e.id
       INNER JOIN lookUpValue lv ON lv.id = e.category

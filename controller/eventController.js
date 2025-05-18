@@ -51,6 +51,7 @@ const getEvents = asyncHandler(async (req, res) => {
 })
 
 const insertEventDetail = asyncHandler(async (req, res) => {
+  console.log(req)
   const { error } = addEventSchema.validate(req.body, {
     abortEarly: true,
   });
@@ -61,10 +62,17 @@ const insertEventDetail = asyncHandler(async (req, res) => {
   }
 
   const { title, description, dateTime, latitude, longitude, category } = req.body;
-
   const transaction = await sequelize.transaction();
+  let eventPayload = { title, description, latitude, longitude, category, userId: req.user.id }
+  if (req.file) {
+    const imageInfo = await imageUpload(req.file.path, 'event', req.user.id, 'thumbnail')
+    eventPayload = {...eventPayload, image_id: imageInfo.image_id, image_url: imageInfo.image_url, public_id: imageInfo.public_id }
+  } else {
+    res.status(400);
+    throw new Error("Thumbnail not found")
+  }
   try {
-    const EventInserted = await addEvent({ title, description, latitude, longitude, category, userId: req.user.id }, transaction);
+    const EventInserted = await addEvent(eventPayload, transaction);
     const event_id = EventInserted.dataValues.id
     const eventDateId = await addEventDate({ date: dateTime, eventId: event_id }, transaction)
     if (eventDateId) {
