@@ -21,10 +21,23 @@ import FText from '../../../components/common/FText';
 import { Comment_Icon, Like_Icon, Share_Icon } from '../../../assets/svg';
 import { useSelector } from 'react-redux';
 import { useSetEventMatchMutation } from '../../../store/slice/api/matchApiSlice';
+import { useEffect } from 'react';
+import { useFetchEventsQuery } from '../../../store/slice/api/eventApiSlice';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 export default function MakeFriends(props) {
   const event = useSelector(state => state.event)
+  const auth = useSelector(state => state.auth)
   const [setEventMatch, {isLoading}] = useSetEventMatchMutation()
+  const { data: events, error, isLoading: eventLoading } = useFetchEventsQuery(
+    auth.location
+      ? {
+          latitude: auth.location.latitude,
+          longitude: auth.location.longitude,
+          getUserEvent: props.selectedTab,
+        }
+      : skipToken // skips the query if location is not ready
+  );
 
   const likePress = async(id) => {
     const response = await setEventMatch({eventid: id})

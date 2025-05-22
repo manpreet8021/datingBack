@@ -39,6 +39,8 @@ export default EventDate
 
 export const addEventDate = async (data, transaction) => await EventDate.create(data, { transaction })
 export const getEvent = async (includeUserEvents, latitude, longitude, userId, limit, offset) => {
+  console.log(includeUserEvents)
+  const userCondition = includeUserEvents == 1 ? "u.id = :userId" : "u.id <> :userId";
   const rows = await sequelize.query(
     `
       SELECT 
@@ -64,7 +66,7 @@ export const getEvent = async (includeUserEvents, latitude, longitude, userId, l
         AND ed.active = true
         AND ed.date >= CURDATE()
         AND ui.image_type='main'
-        AND u.id = :userId
+        AND ${userCondition}
       HAVING distance<=5
       ORDER BY ed.date ASC
       `,
@@ -73,6 +75,5 @@ export const getEvent = async (includeUserEvents, latitude, longitude, userId, l
       type: sequelize.QueryTypes.SELECT,
     }
   );
-  console.log(rows)
   return rows;
 }
