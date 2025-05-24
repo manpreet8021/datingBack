@@ -5,13 +5,13 @@ import { checkIfMatchExist, insertMatch } from "../model/matchModel.js";
 import { insertEventMatch } from "../model/eventMatchModel.js";
 
 const addMatchSchema = Joi.object({
-	eventid: Joi.number().required()
+	eventId: Joi.number().required()
 })
 
 const matchUserForEvent = asyncHandler(async (req, res) => {
 	const user = req.user.id
 	const { error } = addMatchSchema.validate({
-		eventid: req.body.eventid
+		eventId: req.body.eventId
 	})
 
 	if (error) {
@@ -19,9 +19,9 @@ const matchUserForEvent = asyncHandler(async (req, res) => {
 		throw new Error("Event id is required")
 	}
 
-	const { eventid } = req.body
+	const { eventId } = req.body
 
-	const event = await getEventById(eventid)
+	const event = await getEventById(eventId)
 
 	if (event) {
 		const alreadyMatch = await checkIfMatchExist(user, event.dataValues.userId)

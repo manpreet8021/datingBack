@@ -12,7 +12,7 @@ import {
 } from '../../../common/constants';
 import FText from '../../../components/common/FText';
 import {InstagramIcon, TwitterIcon} from '../../../assets/svg';
-import CardBtnComponents from './CardBtnComponents';
+import CardBtnComponents from '../Home/CardBtnComponents';
 import CustomPercentageCircle from '../../../components/Home/CustomPercentageCircle';
 
 export default function SearchPartners(props) {

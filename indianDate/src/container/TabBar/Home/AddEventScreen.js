@@ -9,7 +9,7 @@ import strings from "../../../i18n/strings";
 import { Formik } from "formik"
 import FButton from "../../../components/common/FButton";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getHeight, moderateScale } from "../../../common/constants";
 import { useSelector } from "react-redux";
 import MapView from "../../../components/Home/MapView";
@@ -17,19 +17,25 @@ import * as Yup from 'yup';
 import Typography from "../../../themes/typography";
 import { Dropdown } from 'react-native-element-dropdown';
 import { useGetLookupValueQuery } from "../../../store/slice/api/lookupApiSlice";
-import { useAddEventMutation } from "../../../store/slice/api/eventApiSlice";
-import { useNavigation } from "@react-navigation/native";
+import { useAddEventMutation, useGetEventByIdQuery } from "../../../store/slice/api/eventApiSlice";
 import { StackNav } from "../../../navigation/navigationKey";
 import ImageCropPicker from "react-native-image-crop-picker";
 import AddPhotos from "../../../components/common/AddPhotos";
+import { skipToken } from "@reduxjs/toolkit/query";
 
-export default function AddEventScreen() {
+export default function AddEventScreen({navigation, route}) {
   const user = useSelector(state => state.auth)
-  const navigation = useNavigation();
   const { isLoading, data: categories } = useGetLookupValueQuery('event')
   const [addEvent, { isLoading: addEventLoader }] = useAddEventMutation()
+  const { data: event, error, isLoading: eventLoading } = useGetEventByIdQuery(
+      route.params
+        ? {
+            eventId: route.params.eventId
+          }
+        : skipToken
+    );
   const location = user?.location
-
+  
   const [mapViewVisible, setMapViewVisible] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -48,7 +54,6 @@ export default function AddEventScreen() {
       })
 
       const response = await addEvent(formData)
-      console.log(response)
       if (response.error) {
         throw new Error(response.error)
       } else {
@@ -70,7 +75,7 @@ export default function AddEventScreen() {
     longitude: Yup.number().nullable()
   });
 
-  const initialState = {
+  const [initialState, setInitialState] = useState({
     title: '',
     description: '',
     dateTime: '',
@@ -78,7 +83,21 @@ export default function AddEventScreen() {
     latitude: null,
     longitude: null,
     thumbnail: {id: 0, image: {}, type: 'eventImage'}
-  }
+  })
+
+  useEffect(() => {
+    if (event) {
+      setInitialState({
+        title: event.title || '',
+        description: event.description || '',
+        dateTime: event.dateTime || '',
+        category: event.category || '',
+        latitude: event.latitude || null,
+        longitude: event.longitude || null,
+        thumbnail: { id: 0, image: {}, type: 'eventImage' },
+      });
+    }
+  }, [event]);
 
   return (
     <FSafeAreaView>
@@ -87,12 +106,13 @@ export default function AddEventScreen() {
         <View style={localStyle.mainContainer}>
           <View>
             <FText type={'B24'} color={colors.primary} align={'center'}>
-              {strings.createEvent}
+              {route.params ? strings.editEvent : strings.createEvent}
             </FText>
 
             <Formik initialValues={initialState}
               onSubmit={handleSubmit}
-              validationSchema={eventSchema}>
+              validationSchema={eventSchema}
+              enableReinitialize={true}>
               {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => {
                 const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -241,7 +261,7 @@ export default function AddEventScreen() {
                             }}>
                             {touched.latitude && errors.latitude && errors.latitude}
                           </FText>
-                          <FButton title="Add Event" onPress={handleSubmit} />
+                          <FButton title={route.params ? strings.updateEvent : strings.addEvent} onPress={handleSubmit} />
                         </View>
                       )
                     }

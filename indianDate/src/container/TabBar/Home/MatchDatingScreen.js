@@ -37,7 +37,6 @@ export default function MatchDatingScreen({navigation, route}) {
   const userDetails = async () => {
     const data = await getAsyncStorageData(USER_DATA);
     setUserImage(data?.userImage);
-    console.log('userImage=========', data?.userImage);
   };
 
   const LeftIcon = () => {

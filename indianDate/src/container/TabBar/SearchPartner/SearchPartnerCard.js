@@ -1,15 +1,16 @@
 import {
   Animated,
   PanResponder,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 // custom import
-import {MakePartnersData} from '../../../api/constant';
+import { MakePartnersData } from '../../../api/constant';
 import SearchPartners from './SearchPartners';
 import {
   deviceHeight,
@@ -17,19 +18,21 @@ import {
   getHeight,
   moderateScale,
 } from '../../../common/constants';
-import {colors, styles} from '../../../themes';
+import { colors, styles } from '../../../themes';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import RenderNullComponent from '../../../components/Home/RenderNullComponent';
-import {getAsyncStorageData} from '../../../utils/AsyncStorage';
-import {StackNav} from '../../../navigation/navigationKey';
+import { getAsyncStorageData } from '../../../utils/AsyncStorage';
+import { StackNav } from '../../../navigation/navigationKey';
+import FSafeAreaView from '../../../components/common/FSafeAreaView';
+import HomeHeader from '../Home/HomeHeader';
+import ExploreFilter from '../../../components/modal/ExploreFilter';
 
-export default function SearchPartnerCard() {
+export default function SearchPartnerCard({ navigation }) {
   const [data, setData] = useState(MakePartnersData());
   const swipe = useRef(new Animated.ValueXY()).current;
-  const navigation = useNavigation();
 
   useEffect(() => {
-    swipe.setValue({x: 0, y: 0});
+    swipe.setValue({ x: 0, y: 0 });
   }, [data]);
 
   const LikeDislikeBtnData = [
@@ -56,7 +59,7 @@ export default function SearchPartnerCard() {
     },
   ];
 
-  const LikeAndDisLikeBtn = ({index, item}) => {
+  const LikeAndDisLikeBtn = ({ index, item }) => {
     return (
       <TouchableOpacity
         onPress={item.onPress}
@@ -78,15 +81,15 @@ export default function SearchPartnerCard() {
 
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: (_, {dx, dy}) => {
-      swipe.setValue({x: dx, y: dy});
+    onPanResponderMove: (_, { dx, dy }) => {
+      swipe.setValue({ x: dx, y: dy });
     },
-    onPanResponderRelease: (_, {dx, dy}) => {
+    onPanResponderRelease: (_, { dx, dy }) => {
       let isActionActive = Math.abs(dx) > 200;
       let isSuperLike = Math.abs(dy) > 300;
       if (isActionActive) {
         Animated.timing(swipe, {
-          toValue: {x: dx * 500, y: dy},
+          toValue: { x: dx * 500, y: dy },
           duration: 500,
           useNativeDriver: true,
         }).start(() => {
@@ -98,7 +101,7 @@ export default function SearchPartnerCard() {
         });
       } else if (dy < 100 && isSuperLike) {
         Animated.timing(swipe, {
-          toValue: {x: dx * 500, y: dy * 500},
+          toValue: { x: dx * 500, y: dy * 500 },
           duration: 500,
           useNativeDriver: true,
         }).start(() => {
@@ -106,7 +109,7 @@ export default function SearchPartnerCard() {
         });
       } else {
         Animated.spring(swipe, {
-          toValue: {x: 0, y: 0},
+          toValue: { x: 0, y: 0 },
           friction: 4,
           useNativeDriver: true,
         }).start();
@@ -118,7 +121,7 @@ export default function SearchPartnerCard() {
     if (data && data[0]?.gender) {
       getAsyncStorageData(data[0]?.gender).then(response => {
         if (response) {
-          navigation.navigate(StackNav.CommonMatch, {item: data[0]});
+          navigation.navigate(StackNav.CommonMatch, { item: data[0] });
         }
         setData(data => data?.slice(1));
       });
@@ -132,7 +135,7 @@ export default function SearchPartnerCard() {
     direction => {
       console.log(direction);
       Animated.timing(swipe, {
-        toValue: {x: direction * 500, y: 0},
+        toValue: { x: direction * 500, y: 0 },
         duration: 700,
         useNativeDriver: true,
       }).start(() => {
@@ -150,7 +153,7 @@ export default function SearchPartnerCard() {
 
   const onPressSuperLike = useCallback(() => {
     Animated.timing(swipe, {
-      toValue: {x: 0, y: -1 * 700},
+      toValue: { x: 0, y: -1 * 700 },
       duration: 700,
       useNativeDriver: true,
     }).start(() => {
@@ -161,7 +164,7 @@ export default function SearchPartnerCard() {
 
   const onPressLike = item => {
     onPressSelection(+1);
-    navigation.navigate(StackNav.MatchDatingScreen, {item: item});
+    navigation.navigate(StackNav.MatchDatingScreen, { item: item });
   };
 
   const onPressNope = () => onPressSelection(-1);
@@ -180,28 +183,40 @@ export default function SearchPartnerCard() {
   };
 
   return (
-    <View style={localStyle.mainContainer}>
-      <View>
-        {data && data.map((item, index) => renderItem(item, index)).reverse()}
-      </View>
-      <View style={localStyle.renderLikeAndDislikeBtn}>
-        {LikeDislikeBtnData.map((item, index) => {
-          return <LikeAndDisLikeBtn item={item} />;
-        })}
-      </View>
-      {!data?.length && (
-        <View style={localStyle.emptyComponent}>
-          <RenderNullComponent
-            title1={strings.noNewCardsAvailable}
-            title2={strings.noNewCardsAvailableDesc}
-          />
+    <FSafeAreaView>
+      <ScrollView
+        bounces={false}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={localStyle.mainContainerView}>
+        <HomeHeader showFilter={false} onPressFilter={null} />
+        <View style={localStyle.mainContainer}>
+          <View>
+            {data && data.map((item, index) => renderItem(item, index)).reverse()}
+          </View>
+          <View style={localStyle.renderLikeAndDislikeBtn}>
+            {LikeDislikeBtnData.map((item, index) => {
+              return <LikeAndDisLikeBtn item={item} />;
+            })}
+          </View>
+          {!data?.length && (
+            <View style={localStyle.emptyComponent}>
+              <RenderNullComponent
+                title1={strings.noNewCardsAvailable}
+                title2={strings.noNewCardsAvailableDesc}
+              />
+            </View>
+          )}
         </View>
-      )}
-    </View>
+      </ScrollView>
+    </FSafeAreaView>
   );
 }
 
 const localStyle = StyleSheet.create({
+  mainContainerView: {
+    ...styles.ph20,
+    // ...styles.flex,
+  },
   mainContainer: {
     width: deviceWidth - moderateScale(40),
     height: deviceHeight / 1.6,

@@ -71,6 +71,19 @@ export default function TabNavigation() {
         }}
       />
       <Tab.Screen
+        name={TabNav.SearchPartner}
+        component={TabRoute.SearchPartnerCard}
+        options={{
+          tabBarIcon: ({focused}) => (
+            <TextAndIconComponent
+              focused={focused}
+              InActiveIcon={Add_Light}
+              ActiveIcon={Add_Dark}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
         name={TabNav.ExploreScreen}
         component={TabRoute.ExploreScreen}
         options={{
@@ -83,19 +96,6 @@ export default function TabNavigation() {
           ),
         }}
       />
-      {/* <Tab.Screen
-        name={TabNav.AddPhoto}
-        component={TabRoute.AddPhoto}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <TextAndIconComponent
-              focused={focused}
-              InActiveIcon={Add_Light}
-              ActiveIcon={Add_Dark}
-            />
-          ),
-        }}
-      /> */}
       <Tab.Screen
         name={TabNav.MatchesScreen}
         component={TabRoute.MatchesScreen}

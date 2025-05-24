@@ -5,7 +5,7 @@ import { colors, styles } from "../../../themes";
 import strings from "../../../i18n/strings";
 import { moderateScale } from "../../../common/constants";
 
-const HomeHeader = ({onPressFilter}) => {
+const HomeHeader = ({showFilter=true, onPressFilter}) => {
   return (
     <View>
       <View style={localStyle.headerContainer}>
@@ -18,9 +18,9 @@ const HomeHeader = ({onPressFilter}) => {
           <TouchableOpacity style={localStyle.notificationBg}>
             <LikeIcon />
           </TouchableOpacity>
-          <TouchableOpacity style={localStyle.notificationBg} onPress={onPressFilter}>
+          {showFilter && (<TouchableOpacity style={localStyle.notificationBg} onPress={onPressFilter}>
             <FilterIcon />
-          </TouchableOpacity>
+          </TouchableOpacity>)}
         </View>
       </View>
       {/* <HeaderStory /> */}

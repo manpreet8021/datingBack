@@ -21,26 +21,30 @@ import FText from '../../../components/common/FText';
 import { Comment_Icon, Like_Icon, Share_Icon } from '../../../assets/svg';
 import { useSelector } from 'react-redux';
 import { useSetEventMatchMutation } from '../../../store/slice/api/matchApiSlice';
-import { useEffect } from 'react';
 import { useFetchEventsQuery } from '../../../store/slice/api/eventApiSlice';
 import { skipToken } from '@reduxjs/toolkit/query';
+import { StackNav } from '../../../navigation/navigationKey';
 
 export default function MakeFriends(props) {
   const event = useSelector(state => state.event)
   const auth = useSelector(state => state.auth)
   const [setEventMatch, {isLoading}] = useSetEventMatchMutation()
   const { data: events, error, isLoading: eventLoading } = useFetchEventsQuery(
-    auth.location
+    auth.location.latitude
       ? {
           latitude: auth.location.latitude,
           longitude: auth.location.longitude,
           getUserEvent: props.selectedTab,
         }
-      : skipToken // skips the query if location is not ready
+      : skipToken
   );
 
+  const handleEdit = (id) => {
+    props?.navigation.navigate(StackNav.AddEvent, { eventId: id });
+  }
+
   const likePress = async(id) => {
-    const response = await setEventMatch({eventid: id})
+    const response = await setEventMatch({eventId: id})
   }
   
   const commentPress = (id) => {
@@ -49,7 +53,7 @@ export default function MakeFriends(props) {
 
   const renderData = ({ item, index }) => {
     return (
-      <TouchableOpacity activeOpacity={0.9}>
+      <TouchableOpacity activeOpacity={0.9} onPress={() => props.selectedTab ? handleEdit(item.id) : null}>
         <ImageBackground
           style={[localStyle.bgImage]}
           imageStyle={{ borderRadius: moderateScale(32) }}
@@ -91,16 +95,19 @@ export default function MakeFriends(props) {
                 </View>
               </View>
             </View>
-            <View style={localStyle.likeCommentContainer}>
-              <View>
-                <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => likePress(item.id)}>
-                  <Like_Icon />
-                </TouchableOpacity>
-                <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => commentPress(item.id)}>
-                  <Comment_Icon />
-                </TouchableOpacity>
-              </View>
-            </View>
+            { !props.selectedTab && (
+              <View style={localStyle.likeCommentContainer}>
+                <View>
+                  <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => likePress(item.id)}>
+                    <Like_Icon />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => commentPress(item.id)}>
+                    <Comment_Icon />
+                  </TouchableOpacity>
+                </View>
+              </View>)
+            }
+            
           </LinearGradient>
         </ImageBackground>
       </TouchableOpacity>
@@ -109,7 +116,7 @@ export default function MakeFriends(props) {
 
   return (
     <FlatList
-      data={event.events}
+      data={props.selectedTab ? event.userEvents : event.events}
       keyExtractor={item => item.id}
       renderItem={renderData}
       vertical={true}

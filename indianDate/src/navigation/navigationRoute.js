@@ -25,10 +25,10 @@ import StoryView from '../container/TabBar/Home/UserStory/StoryView';
 // Tab Screen
 import HomeScreen from '../container/TabBar/Home/HomeScreen';
 import ExploreScreen from '../container/TabBar/explore/ExploreScreen';
-import AddPhoto from '../container/TabBar/Add/AddPhoto';
 import MatchesScreen from '../container/TabBar/Matches/MatchesScreen';
 import MessageScreen from '../container/TabBar/Message/MessageScreen';
 import AddEventScreen from '../container/TabBar/Home/AddEventScreen';
+import SearchPartnerCard from '../container/TabBar/SearchPartner/SearchPartnerCard';
 
 export const StackRoute = {
   Splash,
@@ -61,7 +61,7 @@ export const AuthRoute = {
 export const TabRoute = {
   HomeScreen,
   ExploreScreen,
-  AddPhoto,
+  SearchPartnerCard,
   MatchesScreen,
   MessageScreen,
 };

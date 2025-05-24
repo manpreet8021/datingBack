@@ -2,7 +2,6 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Image,
   ScrollView,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -21,9 +20,7 @@ import {
 import UserStories from './UserStory/UserStories';
 import images from '../../../assets/images';
 import FastImage from 'react-native-fast-image';
-import { MakeFriendsData, UserDetails } from '../../../api/constant';
 import MakeFriends from './MakeFriends';
-import SearchPartnerCard from './SearchPartnerCard';
 import { StackNav } from '../../../navigation/navigationKey';
 import { getAsyncStorageData } from '../../../utils/AsyncStorage';
 import { useIsFocused } from '@react-navigation/native';
@@ -228,7 +225,7 @@ export default function HomeScreen({ navigation }) {
           {isSelect === 0 ? (
             <MakeFriends selectedTab={isSelect}/>
           ) : (
-            <MakeFriends selectedTab={isSelect}/>
+            <MakeFriends selectedTab={isSelect} navigation={navigation}/>
           )}
         </View>
       </ScrollView>

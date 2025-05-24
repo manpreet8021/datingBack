@@ -43,11 +43,14 @@ const getEvents = asyncHandler(async (req, res) => {
   try {
     const { latitude, longitude, getUserEvent, limit = 10, offset = 0 } = req.query
     const events = await getEvent(getUserEvent, latitude, longitude, user, limit, offset)
-    res.status(200).json(events)
+    const response = {
+      userEvents: getUserEvent,
+      events
+    }
+    res.status(200).json(response)
   } catch (error) {
     console.log(error)
   }
-
 })
 
 const insertEventDetail = asyncHandler(async (req, res) => {
@@ -120,23 +123,11 @@ const updateEventDetail = asyncHandler(async (req, res) => {
   }
 })
 
-const likeEvent = asyncHandler(async (req, res) => {
-  const { eventid } = req.query;
-  const event = await getEventById(eventid)
-  let match = null
-  if (event) {
-    const matchExist = await checkIfMatchExist(event.userId, req.user.id)
-    if (matchExist) {
-      match = matchExist
-    } else {
-      match = await insertMatch({ initiator: req.user.id, responder: event.userId })
-    }
-    const eventMatch = await insertEventMatch({ event_id: eventid, match_id: match.id })
-    res.status(201).json()
-  } else {
-    res.status(404)
-    throw new Error("Event not found")
-  }
+const getEventByIdController = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+  const event = await getEventByCondition({ id: eventId, userId: req.user.id })
+  const {id, title, description, latitude, longitude, category, image_url} = event.dataValues
+  res.status(200).json({id, title, description, latitude, longitude, category, image_url})
 })
 
-export { getEvents, insertEventDetail, updateEventDetail, likeEvent }
+export { getEvents, insertEventDetail, updateEventDetail, getEventByIdController }

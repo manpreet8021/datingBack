@@ -31,7 +31,7 @@ export const AuthNav = {
 export const TabNav = {
   HomeScreen: 'HomeScreen',
   ExploreScreen: 'ExploreScreen',
-  AddPhoto: 'AddPhoto',
+  SearchPartner: 'SearchPartner',
   MatchesScreen: 'MatchesScreen',
   MessageScreen: 'MessageScreen',
 };

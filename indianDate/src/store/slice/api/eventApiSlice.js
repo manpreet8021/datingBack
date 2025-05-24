@@ -2,10 +2,10 @@ import { apiSlice } from "./apiSlice";
 
 const eventApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getEvents: builder.query({
+        getEventById: builder.query({
             query: (data) => ({
-                url: 'event/',
-                credentials: 'include'
+                url: `event/${data.eventId}`,
+                method: 'GET',
             })
         }),
         addEvent: builder.mutation({
@@ -33,6 +33,6 @@ const eventApiSlice = apiSlice.injectEndpoints({
     })
 })
 
-export const { useGetEventsQuery, useAddEventMutation, useUpdateEventMutation, useFetchEventsQuery } = eventApiSlice;
+export const { useGetEventByIdQuery, useAddEventMutation, useUpdateEventMutation, useFetchEventsQuery } = eventApiSlice;
 
 export default eventApiSlice

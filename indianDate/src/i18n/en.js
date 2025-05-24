@@ -178,5 +178,8 @@ export default {
   exploreEvent: 'Explore Event',
   yourEvent: 'Your Event',
   createEvent: 'Let\'s create your Event',
-  done: 'Done'
+  editEvent: 'Update your Event',
+  done: 'Done',
+  addEvent: 'Add Event',
+  updateEvent: 'Update Event'
 };
