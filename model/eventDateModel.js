@@ -39,7 +39,6 @@ export default EventDate
 
 export const addEventDate = async (data, transaction) => await EventDate.create(data, { transaction })
 export const getEvent = async (includeUserEvents, latitude, longitude, userId, limit, offset) => {
-  console.log(includeUserEvents)
   const userCondition = includeUserEvents == 1 ? "u.id = :userId" : "u.id <> :userId";
   const rows = await sequelize.query(
     `

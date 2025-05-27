@@ -72,7 +72,7 @@ const MapViewComponent = ({ location, setMapViewVisible, setFieldValue, latitude
 					setMarkerPosition(newLocation)
 				}}
 			>
-				<Marker coordinate={markerPosition} />
+				{/* <Marker coordinate={markerPosition} /> */}
 			</MapView>
 			<View style={styles.doneButton}>
 				<FButton

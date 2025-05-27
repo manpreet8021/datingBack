@@ -36,5 +36,11 @@ export const insertLocation = async (data) => {
   const userLocation = await UserLocation.create(data);
   return userLocation
 }
+export const getLatestLocation = async (id) => {
+  return await UserLocation.findOne({
+    where: { user_id: id },
+    order: [['createdAt', 'DESC']],
+  })
+}
 
 export default UserLocation

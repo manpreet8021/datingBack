@@ -4,6 +4,7 @@ import authSliceReducer from "./slice/authSlice";
 import lookUpSliceReducer from "./slice/lookupSlice";
 import eventSliceReducer from "./slice/eventSlice";
 import matchSliceReducer from "./slice/matchSlice";
+import swipeSliceReducer from "./slice/swipeSlice";
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         lookup: lookUpSliceReducer,
         event: eventSliceReducer,
         match: matchSliceReducer,
+        swipe: swipeSliceReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
     devTools: true

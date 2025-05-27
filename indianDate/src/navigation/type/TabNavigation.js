@@ -12,7 +12,11 @@ import {
   Matches_Light,
   Message_Dark,
   Message_Light,
+  ProfileIcon,
+  ProfileIconLight,
+  ProfileIconDark
 } from '../../assets/svg';
+import images from '../../assets/images'
 import strings from '../../i18n/strings';
 import {colors, styles} from '../../themes';
 import {
@@ -77,8 +81,8 @@ export default function TabNavigation() {
           tabBarIcon: ({focused}) => (
             <TextAndIconComponent
               focused={focused}
-              InActiveIcon={Add_Light}
-              ActiveIcon={Add_Dark}
+              InActiveIcon={ProfileIconDark}
+              ActiveIcon={ProfileIconLight}
             />
           ),
         }}

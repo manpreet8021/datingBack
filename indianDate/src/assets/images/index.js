@@ -42,4 +42,6 @@ export default {
   LogOutImage: require('./LogOutImage.png'),
   nullImageLight: require('./nullImageLight.png'),
   MatchDatingBg: require('./MatchDatingBg.png'),
+  searchPartnerDark: require('./SearchPartnerDark.png'),
+  searchPartnerLight: require('./SearchPartnerLight.png'),
 };

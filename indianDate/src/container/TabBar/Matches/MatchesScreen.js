@@ -60,6 +60,7 @@ export default function MatchesScreen({navigation}) {
       <TouchableOpacity
         style={localStyle.matchesContainer}
         activeOpacity={0.7}
+        key={index}
         onPress={() => onPressUserProfile(item)}>
         <ImageBackground
           source={item?.image}
@@ -114,7 +115,7 @@ export default function MatchesScreen({navigation}) {
         showsVerticalScrollIndicator={false}>
         <View style={styles.flexRow}>
           {LikeAndConnectData.map((item, index) => {
-            return <HeaderCategories item={item} />;
+            return <HeaderCategories item={item} index={index} />;
           })}
         </View>
         <FText
@@ -127,7 +128,7 @@ export default function MatchesScreen({navigation}) {
           data={MakePartnersData()}
           renderItem={yourMatches}
           bounces={false}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => {console.log(item); return index.toString()}}
           showsVerticalScrollIndicator={false}
           numColumns={2}
           scrollEnabled={false}

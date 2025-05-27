@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 
 // custom import
 import { MakePartnersData } from '../../../api/constant';
@@ -25,7 +24,6 @@ import { getAsyncStorageData } from '../../../utils/AsyncStorage';
 import { StackNav } from '../../../navigation/navigationKey';
 import FSafeAreaView from '../../../components/common/FSafeAreaView';
 import HomeHeader from '../Home/HomeHeader';
-import ExploreFilter from '../../../components/modal/ExploreFilter';
 
 export default function SearchPartnerCard({ navigation }) {
   const [data, setData] = useState(MakePartnersData());

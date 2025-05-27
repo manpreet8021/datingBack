@@ -42,6 +42,8 @@ import Distance_Icon from './Distance_Icon.svg';
 import Group_White from './Group_White.svg';
 import Scale_Icon from './Scale_Icon.svg';
 import SwipeCardIcon from './SwipeCardIcon.svg';
+import ProfileIconLight from './ProfileIconLight.svg';
+import ProfileIconDark from './ProfileIconDark.svg';
 
 export {
   SplashGroupIcon,
@@ -88,4 +90,6 @@ export {
   Group_White,
   Scale_Icon,
   SwipeCardIcon,
+  ProfileIconLight,
+  ProfileIconDark
 };

@@ -5,7 +5,7 @@ import { navigate } from '../../../navigation/navigationService';
 import { setShowScreen } from '../authSlice';
 import { removeAsyncStorageData } from '../../../utils/AsyncStorage';
 import { ACCOUNT_CREATED, ACCOUNT_PARTIAL_CREATED } from '../../../common/constants';
-
+{BASE_URL}
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
   prepareHeaders: async (headers, {getState}) => {
