@@ -10,7 +10,7 @@ import UserImage from "../model/userImagesModel.js";
 import Event from "../model/eventModel.js";
 import UserLocation from "../model/userLocationModel.js";
 import EventDate from "../model/eventDateModel.js";
-import UserLookingFor from "../model/UserLookingForModel.js";
+import UserLookingFor from "../model/userLookingForModel.js";
 
 const connectDb = async () => {
   await sequelize
