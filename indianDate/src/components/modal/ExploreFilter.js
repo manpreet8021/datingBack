@@ -30,6 +30,7 @@ export default function ExploreFilter(props) {
     setValue(newValue);
   };
   const onPressReset = () => SheetRef?.current?.hide();
+
   const Preferences = ({item, index}) => {
     return (
       <TouchableOpacity
@@ -47,6 +48,7 @@ export default function ExploreFilter(props) {
       </TouchableOpacity>
     );
   };
+
   return (
     <ActionSheet
       ref={SheetRef}
@@ -59,7 +61,7 @@ export default function ExploreFilter(props) {
       <FText type={'B24'} align={'center'} style={localStyle.filterText}>
         {strings.filters}
       </FText>
-      <View style={localStyle.headerContainer}>
+      {/* <View style={localStyle.headerContainer}>
         <FText type={'S18'}>{strings.location}</FText>
         <View style={localStyle.arrowAndPeopleContainer}>
           <FText type={'M16'} color={colors.grayScale400}>
@@ -78,7 +80,7 @@ export default function ExploreFilter(props) {
         <Preferences item={strings.makeFriends} />
         <Preferences item={strings.dating} />
       </View>
-      <View style={localStyle.lineView} />
+      <View style={localStyle.lineView} /> */}
       <View style={localStyle.headerContainer}>
         <FText type={'S18'}>{strings.distance}</FText>
         <View>
@@ -89,8 +91,8 @@ export default function ExploreFilter(props) {
         </View>
       </View>
       <SliderComponents
-        endPoint={10}
-        maxValue={1000}
+        endPoint={[15]}
+        maxValue={100}
         onValuesChange={onChangeValue}
       />
       <View style={localStyle.lineView} />
@@ -104,8 +106,9 @@ export default function ExploreFilter(props) {
         </View>
       </View>
       <SliderComponents
-        endPoint={20}
-        maxValue={1000}
+        endPoint={[20, 30]}
+        minValue={18}
+        maxValue={100}
         onValuesChange={onChangeValue}
         anotherCustom={true}
       />

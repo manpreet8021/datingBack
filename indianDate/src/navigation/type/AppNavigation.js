@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {StackNav} from '../navigationKey';
 import {StackRoute} from '../navigationRoute';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { connectToSocketServer, disconnectFromSocketServer } from '../../common/socket';
 
 const Stack = createNativeStackNavigator();
+
 export default function AppNavigation() {
+  useEffect(()=> {
+    connectToSocketServer()
+    return () => {
+      disconnectFromSocketServer()
+    }
+  }, [])
   return (
     <Stack.Navigator
       screenOptions={{

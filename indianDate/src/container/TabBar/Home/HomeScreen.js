@@ -24,7 +24,6 @@ import MakeFriends from './MakeFriends';
 import { StackNav } from '../../../navigation/navigationKey';
 import { getAsyncStorageData } from '../../../utils/AsyncStorage';
 import { useIsFocused } from '@react-navigation/native';
-import ExploreFilter from '../../../components/modal/ExploreFilter';
 import FloatingAddButton from '../../../components/common/FloatingAddButton';
 import HomeHeader from './HomeHeader';
 import { PermissionsAndroid, Platform } from "react-native";
@@ -37,7 +36,6 @@ export default function HomeScreen({ navigation }) {
   const [isSelect, setIsSelect] = useState(0);
   const isFocused = useIsFocused();
   const [userImage, setUserImage] = useState('');
-  const SheetRef = useRef(null);
   const user = useSelector(state => state.auth)
   const [insertUserLocation, {isLoading}] = useInsertUserLocationMutation()
   const dispatch = useDispatch()
@@ -187,10 +185,6 @@ export default function HomeScreen({ navigation }) {
     });
   };
 
-  const onPressFilter = () => {
-    SheetRef?.current?.show();
-  };
-
   const onPressAddButton = () => {
     navigation.navigate(StackNav.AddEvent)
   }
@@ -217,7 +211,7 @@ export default function HomeScreen({ navigation }) {
         bounces={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={localStyle.mainContainerView}>
-        <HomeHeader onPressFilter={onPressFilter} />
+        <HomeHeader onPressFilter={null} showFilter={false}/>
         <View style={[localStyle.itemSelectContainer, styles.mt15]}>
           <HeaderCategory />
         </View>
@@ -230,7 +224,6 @@ export default function HomeScreen({ navigation }) {
         </View>
       </ScrollView>
       <FloatingAddButton onPress={onPressAddButton} />
-      <ExploreFilter SheetRef={SheetRef} />
     </FSafeAreaView>
   );
 }

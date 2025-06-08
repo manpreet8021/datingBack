@@ -115,7 +115,7 @@ export default function Setting({navigation}) {
             </FText>
           </View>
           <SliderComponents
-            endPoint={10}
+            endPoint={[10]}
             maxValue={100}
             onValuesChange={onChangeValue}
             width={getWidth(285)}

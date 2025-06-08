@@ -107,7 +107,7 @@ export const getUserForSwipe = async ({ userId, dobStart, dobEnd, maxDistance, m
       u.gender = currentUserLookingFor.gender
       AND u.dob BETWEEN :dobStart AND :dobEnd
       AND currentUser.gender = ulf.gender
-      --- AND currentUser.dob BETWEEN :otherDobStart AND :otherDobEnd
+      AND currentUser.dob BETWEEN :otherDobStart AND :otherDobEnd
   
       AND ml.latitude BETWEEN :minLat AND :maxLat
       AND ml.longitude BETWEEN :minLng AND :maxLng

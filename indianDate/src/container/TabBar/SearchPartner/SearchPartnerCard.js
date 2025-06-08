@@ -24,10 +24,24 @@ import { getAsyncStorageData } from '../../../utils/AsyncStorage';
 import { StackNav } from '../../../navigation/navigationKey';
 import FSafeAreaView from '../../../components/common/FSafeAreaView';
 import HomeHeader from '../Home/HomeHeader';
+import { skipToken } from '@reduxjs/toolkit/query';
+import { useSelector } from 'react-redux';
+import { useGetUserForSwipeQuery } from '../../../store/slice/api/swipeApiSlice';
+import ExploreFilter from '../../../components/modal/ExploreFilter';
 
 export default function SearchPartnerCard({ navigation }) {
+  const auth = useSelector(state => state.auth)
+  const { data: events, error, isLoading: userLoading } = useGetUserForSwipeQuery(
+      auth.location.latitude
+        ? {
+            latitude: auth.location.latitude,
+            longitude: auth.location.longitude
+          }
+        : skipToken
+    );
   const [data, setData] = useState(MakePartnersData());
   const swipe = useRef(new Animated.ValueXY()).current;
+  const SheetRef = useRef(null);
 
   useEffect(() => {
     swipe.setValue({ x: 0, y: 0 });
@@ -165,6 +179,10 @@ export default function SearchPartnerCard({ navigation }) {
     navigation.navigate(StackNav.MatchDatingScreen, { item: item });
   };
 
+  const onPressFilter = () => {
+    SheetRef?.current?.show();
+  };
+
   const onPressNope = () => onPressSelection(-1);
 
   const renderItem = (item, index) => {
@@ -186,7 +204,7 @@ export default function SearchPartnerCard({ navigation }) {
         bounces={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={localStyle.mainContainerView}>
-        <HomeHeader showFilter={false} onPressFilter={null} />
+        <HomeHeader onPressFilter={onPressFilter} />
         <View style={localStyle.mainContainer}>
           <View>
             {data && data.map((item, index) => renderItem(item, index)).reverse()}
@@ -206,6 +224,7 @@ export default function SearchPartnerCard({ navigation }) {
           )}
         </View>
       </ScrollView>
+      <ExploreFilter SheetRef={SheetRef} />
     </FSafeAreaView>
   );
 }

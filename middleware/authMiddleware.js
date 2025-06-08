@@ -40,4 +40,20 @@ const protectAuth = asyncHandler(async(req, res, next) => {
     }
 })
 
-export {protect, protectAuth}
+const protectSocket = asyncHandler(async(socket, next) => {
+    const token = verifyToken(socket.handshake.auth?.token);
+    if(token) {
+        let condition = { id: token.id, active: true, updated: true }
+        const user = await getUser(condition);
+        if(user) {
+            socket.user = user
+            next();
+        } else {
+            return next("Error")
+        }
+    } else {
+        return next("Error")
+    }
+})
+
+export {protect, protectAuth, protectSocket}

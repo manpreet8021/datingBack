@@ -7,6 +7,8 @@ import dotenv from 'dotenv'
 import apiRoutes from './routes/index.js'
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import fs from 'fs';
+import { registerSocketServer } from './config/socket.js';
+import http from 'http';
 
 const app = express();
 dotenv.config();
@@ -43,5 +45,7 @@ app.get('/', (req, res) => res.json("Api runing"))
 app.use('/api/', apiRoutes);
 app.use(notFound);
 app.use(errorHandler);
+const server = http.createServer(app);
 
-app.listen(process.env.PORT, ()=>console.log(`running at port: ${process.env.PORT}`))
+registerSocketServer(server)
+server.listen(process.env.PORT, ()=>console.log(`running at port: ${process.env.PORT}`))

@@ -5,9 +5,10 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 // custom import
 import {colors, styles} from '../../themes';
 import {deviceWidth, moderateScale} from '../../common/constants';
+import FText from '../common/FText';
 
 export default function SliderComponents(props) {
-  const {endPoint, maxValue, onValuesChange, startPoint = null, width} = props;
+  const {endPoint, maxValue, onValuesChange, startPoint = null, width, minValue=0} = props;
 
   const customMarker = event => {
     return (
@@ -27,8 +28,8 @@ export default function SliderComponents(props) {
     <View style={styles.mh10}>
       <MultiSlider
         sliderLength={width ? width : deviceWidth - moderateScale(40)}
-        values={[endPoint]}
-        min={0}
+        values={endPoint}
+        min={minValue}
         max={maxValue}
         step={1}
         markerOffsetY={20}
@@ -37,17 +38,14 @@ export default function SliderComponents(props) {
         selectedStyle={{backgroundColor: colors.secondary1}}
         trackStyle={[
           localStyle.sliderContainer,
-
           {
             backgroundColor: colors.grayScale200,
           },
         ]}
         customMarker={customMarker}
+        allowOverlap={false}
+        snapped
       />
-      {/* <View style={localStyle.lowerTextStyle}>
-        <CText type={'B16'}>{'0, 5 ' + String.gr}</CText>
-        <CText type={'B16'}>{'1000 ' + String.gr}</CText>
-      </View> */}
     </View>
   );
 }

@@ -103,7 +103,7 @@ export default {
   dating: 'Dating',
   distance: 'Distance',
   age: 'Age',
-  onlineNow: 'Online now',
+  onlineNow: 'Recently online',
   reset: 'Reset',
   apply: 'Apply',
   discoverByInterest: 'Discover by Interest',

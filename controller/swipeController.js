@@ -24,10 +24,10 @@ const getNearbyUserForSwipe = asyncHandler(async (req, res) => {
   const minLat = lat - (maxDistance / earthRadius) * (180 / Math.PI);
   const maxLng = lng + (maxDistance / earthRadius) * (180 / Math.PI) / Math.cos(lat * Math.PI / 180);
   const minLng = lng - (maxDistance / earthRadius) * (180 / Math.PI) / Math.cos(lat * Math.PI / 180);
+  console.log("here")
+  // const resposne = await getUserForSwipe({ userId: user.id, dobStart: user.dobStart, dobEnd: user.dobEnd, maxDistance: 5, maxLat, minLat, maxLng, minLng, limit, offset})
 
-  const resposne = await getUserForSwipe({ userId: user.id, dobStart: user.dobStart, dobEnd: user.dobEnd, maxDistance: 5, maxLat, minLat, maxLng, minLng, limit, offset})
-
-  res.status(200).json(resposne)
+  res.status(200).json([])
 })
 
 export { getNearbyUserForSwipe }
