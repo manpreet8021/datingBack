@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "dev": "concurrently \"npm run start\" \"npm run front\" ",
     "front": "npm run ios --prefix indianDate",
     "android": "npm run android --prefix indianDate",
