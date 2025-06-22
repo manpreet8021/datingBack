@@ -1,12 +1,13 @@
 import { Sequelize } from 'sequelize';
 
+
 const sequelize = new Sequelize({
-  host: 'localhost',         // Database host
+  host: '172.31.3.247',         // Database host
   dialect: 'mysql',          // Database type (e.g., mysql, postgres, etc.)
-  username: 'root', // Database username
-  password: '', // Database password
-  database: 'Dating', // Database name
-  logging: console.log,      // Optional, logs SQL queries to console
+  username: process.env.MYSQLUSER, // Database username loveiosa
+  password: process.env.MYSQLPASSWORD, // Database password 0bBwcbfb51
+  database: process.env.MYSQLDATABASE, // Database name Loveiosa
+  logging: console.log,      // Optional, logs SQL queries to console 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
 });
 
 export { sequelize };
