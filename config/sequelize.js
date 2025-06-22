@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 
 
 const sequelize = new Sequelize({
-  host: '172.31.3.247',         // Database host
+  host: 'localhost',         // Database host
   dialect: 'mysql',          // Database type (e.g., mysql, postgres, etc.)
   username: process.env.MYSQLUSER, // Database username loveiosa
   password: process.env.MYSQLPASSWORD, // Database password 0bBwcbfb51
