@@ -14,6 +14,7 @@ const MapViewComponent = ({ location, setMapViewVisible, setFieldValue, latitude
 		longitude: longitude
 	});
 
+
 	const handlePlaceSelect = (data, details) => {
 		const { lat, lng } = details.geometry.location;
 		const coords = {
@@ -41,7 +42,7 @@ const MapViewComponent = ({ location, setMapViewVisible, setFieldValue, latitude
 					console.error("Google Places Autocomplete Error:", error);
 				}}
 				query={{
-					key: '',
+					key: 'AIzaSyDRbNA-mlGlnDi2TsJZjbMM_WLTXlPA_qc',
 					language: 'en',
 				}}
 				styles={{
@@ -72,7 +73,7 @@ const MapViewComponent = ({ location, setMapViewVisible, setFieldValue, latitude
 					setMarkerPosition(newLocation)
 				}}
 			>
-				{/* <Marker coordinate={markerPosition} /> */}
+				{ latitude && longitude && (<Marker coordinate={markerPosition} />)}
 			</MapView>
 			<View style={styles.doneButton}>
 				<FButton

@@ -55,6 +55,7 @@ export default function AddEventScreen({navigation, route}) {
 
       const response = await addEvent(formData)
       if (response.error) {
+        console.log(response)
         throw new Error(response.error)
       } else {
         navigation.navigate(StackNav.TabNavigation)
@@ -92,8 +93,8 @@ export default function AddEventScreen({navigation, route}) {
         description: event.description || '',
         dateTime: event.dateTime || '',
         category: event.category || '',
-        latitude: event.latitude || null,
-        longitude: event.longitude || null,
+        latitude: event.latitude,
+        longitude: event.longitude,
         thumbnail: { id: 0, image: {}, type: 'eventImage' },
       });
     }
@@ -102,7 +103,7 @@ export default function AddEventScreen({navigation, route}) {
   return (
     <FSafeAreaView>
       <FHeader />
-      <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}>
+      {/* <KeyBoardAvoidWrapper contentContainerStyle={styles.flexGrow1}> */}
         <View style={localStyle.mainContainer}>
           <View>
             <FText type={'B24'} color={colors.primary} align={'center'}>
@@ -156,6 +157,7 @@ export default function AddEventScreen({navigation, route}) {
                         <MapView location={location} setFieldValue={setFieldValue} setMapViewVisible={setMapViewVisible} latitude={values.latitude} longitude={values.longitude} />
                       ) : (
                         <View>
+                          <FText>1234{values.latitude}</FText>
                           <FInput
                             keyBoardType={'default'}
                             autoCapitalize={'none'}
@@ -272,7 +274,7 @@ export default function AddEventScreen({navigation, route}) {
           </View>
 
         </View>
-      </KeyBoardAvoidWrapper>
+      {/* </KeyBoardAvoidWrapper> */}
     </FSafeAreaView>
   )
 }

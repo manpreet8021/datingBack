@@ -11,7 +11,7 @@
     "front": "npm run ios --prefix indianDate",
     "android": "npm run android --prefix indianDate",
     "device": "concurrently \"npm run start\" \"npm run android\" ",
-    "local": "node index.js"
+    "local": "nodemon index.js"
   },
   "author": "Manpreet Singh",
   "license": "ISC",
