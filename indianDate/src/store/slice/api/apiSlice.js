@@ -28,7 +28,7 @@ const baseQueryWith401Handler = async (args, api, extraOptions) => {
     api.dispatch(setShowScreen('loggedIn'));
   }
 
-  return result;
+  return result.error ? Promise.reject(result) : result;
 };
 
 export const apiSlice = createApi({

@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>876614577382-obb70cmpcetlg38mm6cne3m9bi2btdn9.apps.googleusercontent.com</string>
+	<string>735144566291-0drp3n7n9bqav4b9ludj67dk6tu4icro.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.876614577382-obb70cmpcetlg38mm6cne3m9bi2btdn9</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>876614577382-irb8i3uvord8456sufp8vu99sint9eep.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.735144566291-0drp3n7n9bqav4b9ludj67dk6tu4icro</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAnSYnvCWqTeFhXEO3RXNZgatf9Ij4eFxM</string>
+	<string>AIzaSyBpwK4nph2aPhiXoghYCLHHpE-alJnCwP0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>876614577382</string>
+	<string>735144566291</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>org.reactjs.native.example.indianDate</string>
 	<key>PROJECT_ID</key>
-	<string>yujin-8b576</string>
+	<string>loveiosa-6a8c9</string>
 	<key>STORAGE_BUCKET</key>
-	<string>yujin-8b576.firebasestorage.app</string>
+	<string>loveiosa-6a8c9.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:876614577382:ios:2f3184b1c1249d0df25f27</string>
+	<string>1:735144566291:ios:019d5cf0b01ac1b62a29e6</string>
 </dict>
 </plist>

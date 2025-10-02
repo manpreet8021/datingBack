@@ -16,7 +16,7 @@ class AppDelegate: RCTAppDelegate {
     // They will be passed down to the ViewController used by React Native.
     self.initialProps = [:]
     FirebaseApp.configure()
-    GMSServices.provideAPIKey("AIzaSyAnSYnvCWqTeFhXEO3RXNZgatf9Ij4eFxM")
+    //GMSServices.provideAPIKey("AIzaSyBpwK4nph2aPhiXoghYCLHHpE-alJnCwP0")
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 

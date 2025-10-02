@@ -36,7 +36,7 @@ const insertUserPreference = asyncHandler(async (req, res) => {
     await preferences.update(data, { transaction });
     return preferences;
   } else {
-    const newPref = await ({ ...data, userId }, { transaction });
+    const newPref = ({ ...data, userId }, { transaction });
     return newPref;
   }
 

@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "876614577382",
-    "project_id": "yujin-8b576",
-    "storage_bucket": "yujin-8b576.firebasestorage.app"
+    "project_number": "735144566291",
+    "project_id": "loveiosa-6a8c9",
+    "storage_bucket": "loveiosa-6a8c9.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:876614577382:android:2e7c1e16445f8082f25f27",
+        "mobilesdk_app_id": "1:735144566291:android:2e57b353ad7367b62a29e6",
         "android_client_info": {
           "package_name": "com.indiandate"
         }
       },
       "oauth_client": [
         {
-          "client_id": "876614577382-irb8i3uvord8456sufp8vu99sint9eep.apps.googleusercontent.com",
+          "client_id": "735144566291-fcv4nnvu36fjbsjhp070o05jlb2qp6ho.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.indiandate",
@@ -22,32 +22,24 @@
           }
         },
         {
-          "client_id": "876614577382-j886o4hf5e7npm1igc837skpeua59rnu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.indiandate",
-            "certificate_hash": "cc27247be677eea0fbc2789162a4537af40bbb48"
-          }
-        },
-        {
-          "client_id": "876614577382-n30pfiha3ksk18sc89g5spac1dh8p8m5.apps.googleusercontent.com",
+          "client_id": "735144566291-7040vk2jde8ef342bl1g69glerc92i3n.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD6caia3Q0zAxEqigWnfzQRfmA0uUuWBKk"
+          "current_key": "AIzaSyAaXLzIMIhNBIUh9wq2JtdkDGUlhx9j9Jk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "876614577382-n30pfiha3ksk18sc89g5spac1dh8p8m5.apps.googleusercontent.com",
+              "client_id": "735144566291-7040vk2jde8ef342bl1g69glerc92i3n.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "876614577382-obb70cmpcetlg38mm6cne3m9bi2btdn9.apps.googleusercontent.com",
+              "client_id": "735144566291-0drp3n7n9bqav4b9ludj67dk6tu4icro.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "org.reactjs.native.example.indianDate"

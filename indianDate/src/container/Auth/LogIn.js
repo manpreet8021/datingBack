@@ -33,6 +33,8 @@ GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
 });
 
+console.log(GOOGLE_CLIENT_ID)
+
 export default function LogIn({navigation}) {
   const [number, setNumber] = useState('');
   const [numberInputStyle, setNumberInputStyle] = useState(BlurredStyle);
@@ -78,7 +80,6 @@ export default function LogIn({navigation}) {
           email: response.data?.user?.email
         }
         const user = await googleLogin(data)
-        console.log(user)
         await EncryptedStorage.setItem('token', user?.data.token)
         if(user?.data.updated) {
           await setAsyncStorageData(ACCOUNT_CREATED, true)
