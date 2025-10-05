@@ -8,7 +8,15 @@ const sequelize = new Sequelize({
   username: process.env.MYSQLUSER, // Database username loveiosa
   password: process.env.MYSQLPASSWORD, // Database password 0bBwcbfb51
   database: process.env.MYSQLDATABASE, // Database name Loveiosa
-  logging: console.log,      // Optional, logs SQL queries to console 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
+  port: 3306,
+  logging: console.log,
+  dialectOptions: {
+    charset: 'utf8mb4',
+  },
+  define: {
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_unicode_ci',
+  },
 });
 
 export { sequelize };
