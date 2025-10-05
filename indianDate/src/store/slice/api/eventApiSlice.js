@@ -26,13 +26,19 @@ const eventApiSlice = apiSlice.injectEndpoints({
         }),
         fetchEvents: builder.query({
             query: (data) => ({
-                url: `event/?latitude=${data.latitude}&longitude=${data.longitude}&getUserEvent=${data.getUserEvent}`,
+                url: `event/?latitude=${data.latitude}&longitude=${data.longitude}`,
                 method: 'GET',
+            })
+        }),
+        fetchLoggedInUserEvent: builder.query({
+            query: (data) => ({
+                url: `event/userEvent`,
+                method: 'GET'
             })
         })
     })
 })
 
-export const { useGetEventByIdQuery, useAddEventMutation, useUpdateEventMutation, useFetchEventsQuery } = eventApiSlice;
+export const { useGetEventByIdQuery, useAddEventMutation, useUpdateEventMutation, useFetchEventsQuery, useFetchLoggedInUserEventQuery } = eventApiSlice;
 
 export default eventApiSlice

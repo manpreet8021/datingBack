@@ -7,9 +7,9 @@ import User from "../model/UserModel.js";
 import LookUpData from "../model/lookUpDataModel.js";
 import UserInterest from "../model/userInterestModel.js";
 import UserImage from "../model/userImagesModel.js";
-import Event from "../model/eventModel.js";
+import Event from "../model/eventBean.js";
 import UserLocation from "../model/userLocationModel.js";
-import EventDate from "../model/eventDateModel.js";
+import EventDate from "../model/eventDateBean.js";
 import UserLookingFor from "../model/userLookingForModel.js";
 
 const connectDb = async () => {

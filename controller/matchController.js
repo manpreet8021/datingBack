@@ -1,6 +1,6 @@
 import Joi from "joi";
 import asyncHandler from "../middleware/asyncHandler.js";
-import { getEventById } from "../model/eventModel.js";
+import { getEventById } from "../model/eventService.js";
 import { checkIfMatchExist, insertMatch } from "../model/matchModel.js";
 import { insertEventMatch } from "../model/eventMatchModel.js";
 

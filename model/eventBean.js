@@ -1,7 +1,5 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
-import User from './UserModel.js';
-import LookUpValue from './lookUpValueModel.js';
 
 class Event extends Model { }
 
@@ -62,15 +60,4 @@ Event.init(
   }
 );
 
-User.hasMany(Event, { foreignKey: 'userId', as: 'events' });
-Event.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-
-LookUpValue.hasMany(Event, { foreignKey: 'category', as: 'events' });
-Event.belongsTo(LookUpValue, { foreignKey: 'category', as: 'categoryInfo' });
-
 export default Event
-
-export const getEventById = async (id) => await Event.findByPk(id)
-export const getEventByCondition = async (condition) => await Event.findOne({ where: condition })
-export const addEvent = async (data, transaction) => await Event.create(data, { transaction })
-export const updateEvent = async (data, id, transaction) => await Event.update(data, { where: { id: id }, transaction })

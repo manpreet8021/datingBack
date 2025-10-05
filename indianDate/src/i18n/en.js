@@ -1,5 +1,5 @@
 export default {
-  friendzy: 'Alohomora',
+  friendzy: 'Loveiosa',
   onBoardingText1: 'Make friends with the people like you',
   onBoardingText2: 'Find your preferences partners',
   onBoardingText3: 'Let’s meeting new people around you',

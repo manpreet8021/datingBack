@@ -5,7 +5,7 @@ import { navigate } from '../../../navigation/navigationService';
 import { setShowScreen } from '../authSlice';
 import { removeAsyncStorageData } from '../../../utils/AsyncStorage';
 import { ACCOUNT_CREATED, ACCOUNT_PARTIAL_CREATED } from '../../../common/constants';
-{console.log(BASE_URL)}
+{console.log("base",BASE_URL)}
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
   prepareHeaders: async (headers, {getState}) => {
@@ -13,6 +13,7 @@ const baseQuery = fetchBaseQuery({
 
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
+      headers.set('Content-Type', 'application/json; charset=utf-8')
     }
 
     return headers;

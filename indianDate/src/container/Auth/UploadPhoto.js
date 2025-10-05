@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   ImageBackground,
   StyleSheet,
@@ -29,12 +30,12 @@ import FButton from '../../components/common/FButton';
 import VerifiedModal from '../../components/modal/VerifiedModal';
 import {StackNav, TabNav} from '../../navigation/navigationKey';
 import {useDispatch, useSelector} from 'react-redux';
-import { setAsyncStorageData } from '../../utils/AsyncStorage';
-import { setShowScreen } from '../../store/slice/authSlice';
+import {setAsyncStorageData} from '../../utils/AsyncStorage';
+import {setShowScreen} from '../../store/slice/authSlice';
 
 export default function UploadPhoto({navigation}) {
   const auth = useSelector(state => state.auth);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [addImage, setAddImage] = useState([
     {id: 0, image: {}, type: 'addImage'},
@@ -117,10 +118,12 @@ export default function UploadPhoto({navigation}) {
         });
       }
     });
-    const hasImages = addImages.some(item => item.image && item.image.uri) || addImage.some(item => item.image && item.image.uri);
-    if(selectImage === null || !hasImages) {
+    const hasImages =
+      addImages.some(item => item.image && item.image.uri) ||
+      addImage.some(item => item.image && item.image.uri);
+    if (selectImage === null || !hasImages) {
       alert('Please select at least two image');
-      return
+      return;
     }
     try {
       auth.userInfo.interest.forEach(item => {
@@ -138,7 +141,7 @@ export default function UploadPhoto({navigation}) {
         });
       }
       const response = await updateUserDetail(formData);
-      if(response.error) {
+      if (response.error) {
         throw response.error;
       }
       await setAsyncStorageData(ACCOUNT_CREATED, true);
@@ -151,7 +154,7 @@ export default function UploadPhoto({navigation}) {
 
   const onPressGetStarted = async () => {
     setModalVisible(false);
-    dispatch(setShowScreen('AppScreen'))
+    dispatch(setShowScreen('AppScreen'));
   };
 
   return (
@@ -205,7 +208,11 @@ export default function UploadPhoto({navigation}) {
               );
             })}
           </View>
-          <FButton title={strings.next} onPress={onPressNext} />
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <FButton title={strings.next} onPress={onPressNext} />
+          )}
         </View>
         <StepIndicator step={6} />
         <VerifiedModal
@@ -254,7 +261,7 @@ const localStyle = StyleSheet.create({
   changePhotoText: {
     ...styles.ml5,
   },
-  
+
   borderRadius: {
     borderRadius: moderateScale(32),
   },

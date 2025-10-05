@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Animated,
   FlatList,
   Image,
@@ -16,51 +17,68 @@ import {
   getWidth,
   moderateScale,
 } from '../../../common/constants';
-import { colors, styles } from '../../../themes';
+import {colors, styles} from '../../../themes';
 import FText from '../../../components/common/FText';
-import { Comment_Icon, Like_Icon, Share_Icon } from '../../../assets/svg';
-import { useSelector } from 'react-redux';
-import { useSetEventMatchMutation } from '../../../store/slice/api/matchApiSlice';
-import { useFetchEventsQuery } from '../../../store/slice/api/eventApiSlice';
-import { skipToken } from '@reduxjs/toolkit/query';
-import { StackNav } from '../../../navigation/navigationKey';
+import {Comment_Icon, Like_Icon, Share_Icon} from '../../../assets/svg';
+import {useSelector} from 'react-redux';
+import {useSetEventMatchMutation} from '../../../store/slice/api/matchApiSlice';
+import {
+  useFetchEventsQuery,
+  useFetchLoggedInUserEventQuery,
+} from '../../../store/slice/api/eventApiSlice';
+import {skipToken} from '@reduxjs/toolkit/query';
+import {StackNav} from '../../../navigation/navigationKey';
 
 export default function MakeFriends(props) {
-  const event = useSelector(state => state.event)
-  const auth = useSelector(state => state.auth)
-  const [setEventMatch, {isLoading}] = useSetEventMatchMutation()
-  const { data: events, error, isLoading: eventLoading } = useFetchEventsQuery(
-    auth.location.latitude
+  const event = useSelector(state => state.event);
+  const auth = useSelector(state => state.auth);
+  const [setEventMatch, {isLoading}] = useSetEventMatchMutation();
+
+  let queryArgs =
+    auth.location.latitude && props.selectedTab === 0
       ? {
           latitude: auth.location.latitude,
           longitude: auth.location.longitude,
-          getUserEvent: props.selectedTab,
         }
-      : skipToken
-  );
+      : skipToken;
+  const {
+    data: eventData,
+    error: eventError,
+    isLoading: eventLoading,
+  } = useFetchEventsQuery(queryArgs);
 
-  const handleEdit = (id) => {
-    props?.navigation.navigate(StackNav.AddEvent, { eventId: id });
-  }
+  let userParameter = props.selectedTab === 1 ? {} : skipToken;
+  const {
+    data: userEventData,
+    error: userEventError,
+    isLoading: userEventLoading,
+  } = useFetchLoggedInUserEventQuery(userParameter);
 
-  const likePress = async(id) => {
-    const response = await setEventMatch({eventId: id})
-  }
-  
-  const commentPress = (id) => {
-    
-  }
+  const error = props.selectedTab === 1 ? userEventError : eventError;
+  const loading = props.selectedTab === 1 ? userEventLoading : eventLoading;
 
-  const renderData = ({ item, index }) => {
+  const handleEdit = id => {
+    props?.navigation.navigate(StackNav.AddEvent, {eventId: id});
+  };
+
+  const likePress = async id => {
+    const response = await setEventMatch({eventId: id});
+  };
+
+  const commentPress = id => {};
+
+  const renderData = ({item, index}) => {
     return (
-      <TouchableOpacity activeOpacity={0.9} onPress={() => props.selectedTab ? handleEdit(item.id) : null}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => (props.selectedTab ? handleEdit(item.id) : null)}>
         <ImageBackground
           style={[localStyle.bgImage]}
-          imageStyle={{ borderRadius: moderateScale(32) }}
+          imageStyle={{borderRadius: moderateScale(32)}}
           source={{uri: item.image_url}}>
           <LinearGradient
-            start={{ x: 0.6, y: 0 }}
-            end={{ x: 1, y: 1.3 }}
+            start={{x: 0.6, y: 0}}
+            end={{x: 1, y: 1.3}}
             colors={[colors.linearColor1, colors.linearColor4]}
             style={localStyle.innerContainer}>
             <View style={localStyle.mainViewContainer}>
@@ -77,37 +95,47 @@ export default function MakeFriends(props) {
                   {item.postText}
                 </FText>
                 <View style={localStyle.userImageAndName}>
-                  <Image
-                    src={item.profileImage}
-                    style={localStyle.userProfileImage}
-                  />
+                  {!props.selectedTab && (
+                    <Image
+                      src={item.profileImage}
+                      style={localStyle.userProfileImage}
+                    />
+                  )}
                   <View style={localStyle.userNameContainer}>
-                    <FText type={'S14'} color={colors.white}>
-                      {item.username}
-                    </FText>
+                    {!props.selectedTab && (
+                      <FText type={'S14'} color={colors.white}>
+                        {item.username}
+                      </FText>
+                    )}
                     <FText
                       type={'S14'}
                       color={colors.grayScale50}
-                      style={[styles.mt5, { flexShrink: 1, flexWrap: 'wrap', maxWidth: 200 }]}>
+                      style={[
+                        styles.mt5,
+                        {flexShrink: 1, flexWrap: 'wrap', maxWidth: 200},
+                      ]}>
                       {item.description}
                     </FText>
                   </View>
                 </View>
               </View>
             </View>
-            { !props.selectedTab && (
+            {!props.selectedTab && (
               <View style={localStyle.likeCommentContainer}>
                 <View>
-                  <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => likePress(item.id)}>
+                  <TouchableOpacity
+                    style={localStyle.likeCommentBg}
+                    onPress={() => likePress(item.id)}>
                     <Like_Icon />
                   </TouchableOpacity>
-                  <TouchableOpacity style={localStyle.likeCommentBg} onPress={() => commentPress(item.id)}>
+                  <TouchableOpacity
+                    style={localStyle.likeCommentBg}
+                    onPress={() => commentPress(item.id)}>
                     <Comment_Icon />
                   </TouchableOpacity>
                 </View>
-              </View>)
-            }
-            
+              </View>
+            )}
           </LinearGradient>
         </ImageBackground>
       </TouchableOpacity>
@@ -115,18 +143,24 @@ export default function MakeFriends(props) {
   };
 
   return (
-    <FlatList
-      data={props.selectedTab ? event.userEvents : event.events}
-      keyExtractor={item => item.id}
-      renderItem={renderData}
-      vertical={true}
-      bounces={false}
-      showsVerticalScrollIndicator={false}
-      estimatedItemSize={200}
-      contentContainerStyle={localStyle.mainContainer}
-      scrollEnabled={false}
-      {...props}
-    />
+    <>
+      {loading ? (
+        <ActivityIndicator />
+      ) : (
+        <FlatList
+          data={props.selectedTab ? event.userEvents : event.events}
+          keyExtractor={item => item?.id}
+          renderItem={renderData}
+          vertical={true}
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+          estimatedItemSize={200}
+          contentContainerStyle={localStyle.mainContainer}
+          scrollEnabled={false}
+          {...props}
+        />
+      )}
+    </>
   );
 }
 
@@ -135,7 +169,7 @@ const localStyle = StyleSheet.create({
     height: getHeight(343),
     width: deviceWidth - moderateScale(40),
     ...styles.mv10,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   innerContainer: {
     height: getHeight(343),
@@ -171,7 +205,7 @@ const localStyle = StyleSheet.create({
     height: moderateScale(48),
     width: moderateScale(48),
     borderRadius: 40, // half of width/height to make it a circle
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   userNameContainer: {
     ...styles.mt5,
