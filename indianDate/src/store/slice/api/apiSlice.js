@@ -13,7 +13,6 @@ const baseQuery = fetchBaseQuery({
 
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
-      headers.set('Content-Type', 'application/json; charset=utf-8')
     }
 
     return headers;
