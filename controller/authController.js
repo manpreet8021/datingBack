@@ -151,7 +151,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   const transaction = await sequelize.transaction();
   const { name, dob, gender, interest, lookingFor } = req.body
 
-  const dateOfBirth = moment(dob, 'DD/MM/YYYY').toDate()
+  const dateOfBirth = moment(dob, 'YYYY-MM-DD').toDate()
   const interestData = interest.map((interest_id) => ({
     user_id: req.user.id,
     interest_id,
@@ -164,7 +164,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
 
   try {
     await Promise.all([
-      updateUser({ name, dateOfBirth, gender, updated: true }, req.user.id, transaction),
+      updateUser({ name, dob: dateOfBirth, gender, updated: true }, req.user.id, transaction),
       insertInterest(interestData, transaction),
       insertImages(imageValue, transaction),
       insertLookingForData(lookingForData, transaction)

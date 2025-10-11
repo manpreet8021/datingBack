@@ -1,6 +1,9 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
 import User from './UserModel.js';
+import ngeohash from 'ngeohash';
+
+const GEO_PRECISION = 6;
 
 class UserLocation extends Model { }
 
@@ -18,6 +21,11 @@ UserLocation.init(
     longitude: {
       type: DataTypes.FLOAT,
       allowNull: false
+    },
+    geohash: {
+      type: DataTypes.STRING(12),
+      allowNull: true,
+      index: true,
     }
   },
   {
@@ -31,6 +39,15 @@ UserLocation.belongsTo(User, {
   foreignKey: 'user_id'
 });
 
+UserLocation.beforeCreate((loc) => {
+  loc.geohash = ngeohash.encode(loc.latitude, loc.longitude, GEO_PRECISION);
+});
+
+UserLocation.beforeUpdate((loc) => {
+  if (loc.changed('latitude') || loc.changed('longitude')) {
+    loc.geohash = ngeohash.encode(loc.latitude, loc.longitude, GEO_PRECISION);
+  }
+});
 
 export const insertLocation = async (data) => {
   const userLocation = await UserLocation.create(data);

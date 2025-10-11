@@ -70,70 +70,65 @@ export const getUser = async (condition) => {
   const user = await User.findOne({ where: condition });
   return user
 }
-export const getUserForSwipe = async ({ userId, dobStart, dobEnd, maxDistance, maxLat, minLat, maxLng, minLng, limit, offset}) => {
-  const rows = await sequelize.query(
+export const getUserForSwipe = async ({ userId, dobStart, dobEnd, maxDistance, nearbyHashes, limit, offset, otherDobStart, otherDobEnd}) => {
+  const users = await sequelize.query(
     `
-    WITH latest_locations AS (
-      SELECT user_id, latitude, longitude,
-             ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at DESC) AS rn
-      FROM UserLocation
-    ),
-    match_locations AS (
-      SELECT * FROM latest_locations WHERE rn = 1 AND user_id != :userId
-    ),
-    current_user_location AS (
-      SELECT * FROM latest_locations WHERE rn = 1 AND user_id = :userId
-    )
-    SELECT 
-      u.*,
-      COUNT(DISTINCT cuin.interest_id) AS shared_interest_count,
-      (111.111 * DEGREES(ACOS(LEAST(1.0,
-        COS(RADIANS(cul.latitude)) * COS(RADIANS(ml.latitude)) *
-        COS(RADIANS(cul.longitude - ml.longitude)) +
-        SIN(RADIANS(cul.latitude)) * SIN(RADIANS(ml.latitude))
-      )))) AS distance_km
-    FROM user u
-    JOIN match_locations ml ON ml.user_id = u.id
-    JOIN current_user_location cul ON cul.user_id = :userId
-  
-    INNER JOIN UserLookingFor ulf ON ulf.user_id = u.id
-    INNER JOIN UserLookingFor currentUserLookingFor ON currentUserLookingFor.user_id = :userId
-    INNER JOIN user currentUser ON currentUser.id = :userId
-  
-    LEFT JOIN UserInterest un ON un.user_id = u.id
-    LEFT JOIN UserInterest cuin ON cuin.user_id = :userId AND cuin.interest_id = un.interest_id
-  
-    WHERE 
-      u.gender = currentUserLookingFor.gender
-      AND u.dob BETWEEN :dobStart AND :dobEnd
-      AND currentUser.gender = ulf.gender
-      AND currentUser.dob BETWEEN :otherDobStart AND :otherDobEnd
-  
-      AND ml.latitude BETWEEN :minLat AND :maxLat
-      AND ml.longitude BETWEEN :minLng AND :maxLng
-  
-      AND NOT EXISTS (
-        SELECT 1 FROM Match m2
-        WHERE 
-          (
-            (m2.initiator = :userId AND m2.responder = u.id)
-            OR (m2.responder = :userId AND m2.initiator = u.id)
-          )
-          AND (
-            m2.status = 'matched'
-            OR (m2.status = 'pending' AND m2.initiator = :userId)
-          )
+      WITH latest_locations AS (
+        SELECT user_id, latitude, longitude, geohash,
+              ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY createdAt DESC) AS rn
+        FROM UserLocation
+      ),
+      match_locations AS (
+        SELECT * FROM latest_locations 
+        WHERE rn = 1 
+          AND user_id != :userId
+          AND geohash IN (:nearbyHashes)
+      ),
+      current_user_location AS (
+        SELECT * FROM latest_locations WHERE rn = 1 AND user_id = :userId
       )
-  
-      AND (111.111 * DEGREES(ACOS(LEAST(1.0,
-        COS(RADIANS(cul.latitude)) * COS(RADIANS(ml.latitude)) *
-        COS(RADIANS(cul.longitude - ml.longitude)) +
-        SIN(RADIANS(cul.latitude)) * SIN(RADIANS(ml.latitude))
-      )))) <= :maxDistance
-  
-    GROUP BY u.id, ml.latitude, ml.longitude, cul.latitude, cul.longitude
-    ORDER BY shared_interest_count DESC, distance_km ASC
-    LIMIT :limit OFFSET :offset
+      SELECT 
+        u.*,
+        COUNT(DISTINCT cuin.interest_id) AS shared_interest_count,
+        (6371 * acos(least(1,
+          cos(radians(cul.latitude)) * cos(radians(ml.latitude)) *
+          cos(radians(ml.longitude - cul.longitude)) +
+          sin(radians(cul.latitude)) * sin(radians(ml.latitude))
+        ))) AS distance_km
+      FROM user u
+      JOIN match_locations ml ON ml.user_id = u.id
+      JOIN current_user_location cul ON cul.user_id = :userId
+    
+      INNER JOIN UserLookingFor ulf ON ulf.user_id = u.id
+      INNER JOIN UserLookingFor currentUserLookingFor ON currentUserLookingFor.user_id = :userId
+      INNER JOIN user currentUser ON currentUser.id = :userId
+    
+      LEFT JOIN UserInterest un ON un.user_id = u.id
+      LEFT JOIN UserInterest cuin ON cuin.user_id = :userId AND cuin.interest_id = un.interest_id
+    
+      WHERE 
+        u.gender = currentUserLookingFor.gender
+        AND u.dob BETWEEN :dobStart AND :dobEnd
+        AND currentUser.gender = ulf.gender
+        AND currentUser.dob BETWEEN :otherDobStart AND :otherDobEnd
+
+        AND NOT EXISTS (
+          SELECT 1 FROM UserMatch m2
+          WHERE 
+            (
+              (m2.initiator = :userId AND m2.responder = u.id)
+              OR (m2.responder = :userId AND m2.initiator = u.id)
+            )
+            AND (
+              m2.status = 'matched'
+              OR (m2.status = 'pending' AND m2.initiator = :userId)
+            )
+        )
+
+      HAVING distance_km <= :maxDistance
+      GROUP BY u.id
+      ORDER BY shared_interest_count DESC, distance_km ASC
+      LIMIT :limit OFFSET :offset
     `,
     {
       replacements: {
@@ -141,16 +136,13 @@ export const getUserForSwipe = async ({ userId, dobStart, dobEnd, maxDistance, m
         dobStart,
         dobEnd,
         maxDistance,
-        minLat,
-        maxLat,
-        minLng,
-        maxLng,
+        nearbyHashes,
         limit,
-        offset
+        offset,
+        otherDobStart,
+        otherDobEnd,
       },
       type: sequelize.QueryTypes.SELECT,
-    }
-  );  
-  return rows;
+    })
 }
 export default User
