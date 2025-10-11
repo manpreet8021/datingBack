@@ -21,7 +21,6 @@ export default function LookingFor({ navigation }) {
 	const { data: genderData, isLoading } = useGetLookupValueQuery('gender');
 
 	const onPressItem = item => {
-		console.log(item)
 		setSelect(prevSelect => {
 			if (prevSelect.includes(item.id)) {
 				return prevSelect.filter(i => i !== item.id);

@@ -29,9 +29,6 @@ UserLookingFor.belongsTo(User, {
 });
 
 
-export const insertUserFor = async (data) => {
-	const userLooking = await UserLookingFor.create(data);
-	return userLooking
-}
+export const insertLookingForData = async(value, transaction) => { await UserLookingFor.bulkCreate(value, { transaction })}
 
 export default UserLookingFor

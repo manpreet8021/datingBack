@@ -2,9 +2,9 @@ import { DataTypes, Model, Op } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
 import User from './UserModel.js';
 
-class Match extends Model { }
+class UserMatch extends Model { }
 
-Match.init(
+UserMatch.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -40,8 +40,8 @@ Match.init(
   },
   {
     sequelize,
-    modelName: 'Match',
-    tableName: 'Match',
+    modelName: 'UserMatch',
+    tableName: 'UserMatch',
     timestamps: true,
     indexes: [
       {
@@ -52,18 +52,18 @@ Match.init(
   }
 );
 
-Match.belongsTo(User, {
+UserMatch.belongsTo(User, {
   foreignKey: 'initiator'
 });
 
-Match.belongsTo(User, {
+UserMatch.belongsTo(User, {
   foreignKey: 'responder'
 });
 
-export default Match
+export default UserMatch
 
 export const checkIfMatchExist = async (initiator, responder) => {
-  return await Match.findOne({
+  return await UserMatch.findOne({
     where: {
       [Op.or]: [
         { initiator: initiator, responder: responder },
@@ -73,6 +73,6 @@ export const checkIfMatchExist = async (initiator, responder) => {
   });
 }
 export const insertMatch = async(data) => {
-  const match = await Match.create(data)
-  return match
+  const userMatch = await UserMatch.create(data)
+  return userMatch
 }

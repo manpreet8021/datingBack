@@ -7,7 +7,7 @@ import {
   getEventByCondition,
   updateEventDate,
 } from "../model/eventService.js";
-import { checkIfMatchExist, insertMatch } from "../model/matchModel.js";
+import { checkIfMatchExist, insertMatch } from "../model/userMatchModel.js";
 import {
   checkIfEventMatchExist,
   insertEventMatch,

@@ -6,7 +6,8 @@ const initialState = {
     name: '',
     dob: '',
     gender: '',
-    interest: []
+    interest: [],
+    lookingFor: []
   },
   showScreen: null,
   location: {

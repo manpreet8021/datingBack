@@ -9,13 +9,14 @@ const addMatchSchema = Joi.object({
 
 const getNearbyUserForSwipe = asyncHandler(async (req, res) => {
   const user = req.user.id
+  console.log("inside hehre")
   const limit = 20
   const offset = 0
 
   const earthRadius = 6371; // km
   const maxDistance = 50; // km
 
-  const currentUserLocation = await getLatestLocation(user.id)
+  const currentUserLocation = await getLatestLocation(user)
 
   const lat = currentUserLocation.dataValues.latitude;
   const lng = currentUserLocation.dataValues.longitude;
@@ -24,10 +25,10 @@ const getNearbyUserForSwipe = asyncHandler(async (req, res) => {
   const minLat = lat - (maxDistance / earthRadius) * (180 / Math.PI);
   const maxLng = lng + (maxDistance / earthRadius) * (180 / Math.PI) / Math.cos(lat * Math.PI / 180);
   const minLng = lng - (maxDistance / earthRadius) * (180 / Math.PI) / Math.cos(lat * Math.PI / 180);
-  console.log("here")
-  // const resposne = await getUserForSwipe({ userId: user.id, dobStart: user.dobStart, dobEnd: user.dobEnd, maxDistance: 5, maxLat, minLat, maxLng, minLng, limit, offset})
-
-  res.status(200).json([])
+  console.log(user)
+  const resposne = await getUserForSwipe({ userId: user, dobStart: 20, dobEnd: 30, maxDistance: 100, maxLat, minLat, maxLng, minLng, limit, offset})
+  console.log(resposne)
+  res.status(200).json(resposne)
 })
 
 export { getNearbyUserForSwipe }

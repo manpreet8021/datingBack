@@ -11,6 +11,7 @@ import { imageUpload, uploadMultipleImages } from "../config/imageUpload.js";
 import { insertImages } from "../model/userImagesModel.js";
 import { insertLocation } from "../model/userLocationModel.js";
 import moment from 'moment';
+import { insertLookingForData } from "../model/userLookingForModel.js";
 
 const validatePhoneNumber = (phone, countryCode) => {
   const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
@@ -37,7 +38,8 @@ const validateUserUpdateSchema = Joi.object({
   name: Joi.string().required(),
   dob: Joi.string().required(),
   gender: Joi.string().required(),
-  interest: Joi.array().items(Joi.number().integer().positive().required()).min(5).required()
+  interest: Joi.array().items(Joi.number().integer().positive().required()).min(5).required(),
+  lookingFor: Joi.array().items(Joi.number().integer().positive().required()).min(1).required()
 })
 
 const insertLocationSchema = Joi.object({
@@ -147,7 +149,7 @@ const updateUserDetail = asyncHandler(async (req, res) => {
   }
   
   const transaction = await sequelize.transaction();
-  const { name, dob, gender, interest } = req.body
+  const { name, dob, gender, interest, lookingFor } = req.body
 
   const dateOfBirth = moment(dob, 'DD/MM/YYYY').toDate()
   const interestData = interest.map((interest_id) => ({
@@ -155,11 +157,18 @@ const updateUserDetail = asyncHandler(async (req, res) => {
     interest_id,
     active: true,
   }));
+  const lookingForData = lookingFor.map((lookingFor) => ({
+    user_id: req.user.id,
+    gender: lookingFor
+  }))
 
   try {
-    await updateUser({ name, dateOfBirth, gender, updated: true }, req.user.id, transaction)
-    await insertInterest(interestData, transaction)
-    await insertImages(imageValue, transaction)
+    await Promise.all([
+      updateUser({ name, dateOfBirth, gender, updated: true }, req.user.id, transaction),
+      insertInterest(interestData, transaction),
+      insertImages(imageValue, transaction),
+      insertLookingForData(lookingForData, transaction)
+    ]);
     await transaction.commit();
     res.status(200).json({ name: name })
   } catch (error) {

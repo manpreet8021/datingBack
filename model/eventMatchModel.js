@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../config/sequelize.js';
 import Event from './eventBean.js';
-import Match from './matchModel.js';
+import Match from './userMatchModel.js';
 
 class EventMatch extends Model { }
 

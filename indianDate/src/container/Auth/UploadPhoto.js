@@ -132,6 +132,10 @@ export default function UploadPhoto({navigation}) {
       formData.append('name', auth.userInfo.name);
       formData.append('dob', auth.userInfo.dob);
       formData.append('gender', auth.userInfo.gender);
+      console.log(auth.userInfo)
+      auth.userInfo.lookingFor.forEach(item => {
+        formData.append('lookingFor[]', item)
+      })
 
       if (selectImage) {
         formData.append('profile', {
